@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B4 粗野控件 + S1 表盘 · 首页</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&amp;family=Noto+Sans+SC:wght@500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2B2B2A}a:hover{color:#2B2B2A}
+</style>
+</head>
+<body>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 0 16px; background: #E8E6E1; color: #2B2B2A; font-family: Archivo, 'Noto Sans SC', sans-serif; position: relative; overflow: hidden">
+  <div style="padding-top: 54px; display: flex; justify-content: space-between">
+    <button style="height: 46px; padding: 0 18px; border: 3px solid #2B2B2A; border-radius: 10px; background: #F4F3EF; box-shadow: 4px 4px 0 #2B2B2A; font: inherit; font-size: 17px; font-weight: 700; color: #2B2B2A">我 ▾</button>
+    <button style="height: 46px; padding: 0 14px; border: 3px solid #2B2B2A; border-radius: 10px; background: #E2611B; box-shadow: 4px 4px 0 #2B2B2A; font: inherit; font-size: 15px; font-weight: 700; color: #FFFFFF">1 条待认领 →</button>
+  </div>
+
+  <div style="margin-top: 18px; height: 336px; border: 3px solid #2B2B2A; border-radius: 24px; background: #F4F3EF; box-shadow: 6px 6px 0 #2B2B2A; display: flex; align-items: center; justify-content: center; box-sizing: border-box">
+    <svg role="img" aria-label="体重表盘：指针指向 68.25 公斤；外圈浅色弧是近 30 天的常态范围；橙色三角是目标 66 公斤" width="300" height="300" viewBox="0 0 300 300">
+      <path d="M150.0 12.0 A138 138 0 0 1 270.4 82.6" fill="none" stroke="#D3CFC6" stroke-width="12" stroke-linecap="round"/>
+      <path d="M70.8 229.2L59.5 240.5M44.2 206.6L37.1 210.3M40.2 171.9L24.5 175.0M30.6 138.2L22.6 137.5M46.5 107.1L31.7 101.0M57.2 73.9L51.1 68.8M87.8 56.9L78.9 43.6M115.2 35.2L112.8 27.5M150.0 38.0L150.0 22.0M184.8 35.2L187.2 27.5M212.2 56.9L221.1 43.6M242.8 73.9L248.9 68.8M253.5 107.1L268.3 101.0M269.4 138.2L277.4 137.5M259.8 171.9L275.5 175.0M255.8 206.6L262.9 210.3M229.2 229.2L240.5 240.5" stroke="#2B2B2A" stroke-width="3"/>
+      <g font-family="Archivo, sans-serif" font-size="15" font-weight="700" fill="#6E6C68" text-anchor="middle"><text x="61.3" y="118.3">66</text><text x="238.7" y="118.3">70</text></g>
+      <path d="M20 94 L36 100 L22 110 Z" fill="#E2611B" stroke="#2B2B2A" stroke-width="2"/>
+      <path d="M150 150L165.3 47.1" stroke="#2B2B2A" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="150" cy="150" r="12" fill="#E2611B" stroke="#2B2B2A" stroke-width="3"/>
+      <text x="150" y="216" text-anchor="middle" font-family="Archivo, sans-serif" font-size="46" font-weight="900" letter-spacing="-2" fill="#2B2B2A">68.25</text>
+      <text x="150" y="240" text-anchor="middle" font-size="14" font-weight="700" fill="#6E6C68">kg · 比上次 −0.15</text>
+    </svg>
+  </div>
+  <div style="margin-top: 12px; display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 700; color: #6E6C68">
+    <span style="display: flex; align-items: center; gap: 8px"><span style="width: 18px; height: 10px; border-radius: 5px; background: #D3CFC6; border: 2px solid #2B2B2A"></span>近 30 天常态</span>
+    <span style="display: flex; align-items: center; gap: 8px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M1 1 L13 7 L1 13 Z" fill="#E2611B" stroke="#2B2B2A" stroke-width="1.5"/></svg>目标 66.0</span>
+  </div>
+
+  <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+    <div style="padding: 12px 14px; border: 3px solid #2B2B2A; border-radius: 14px; background: #F4F3EF; box-shadow: 5px 5px 0 #2B2B2A; display: flex; align-items: center; gap: 10px">
+      <svg role="img" aria-label="体脂率旋钮在标准区间中间" width="44" height="44" viewBox="0 0 72 72"><circle cx="36" cy="36" r="27" fill="#E8E6E1" stroke="#2B2B2A" stroke-width="3"/><path d="M36 36L36 14" stroke="#2B2B2A" stroke-width="5" stroke-linecap="round"/></svg>
+      <span style="display: flex; flex-direction: column; white-space: nowrap"><span style="font-size: 14px; font-weight: 700; color: #6E6C68">体脂率</span><span style="font-size: 30px; font-weight: 900; letter-spacing: -1px">18.6<span style="font-size: 15px"> %</span></span></span>
+    </div>
+    <div style="padding: 12px 14px; border: 3px solid #2B2B2A; border-radius: 14px; background: #F4F3EF; box-shadow: 5px 5px 0 #2B2B2A; display: flex; align-items: center; gap: 10px">
+      <svg role="img" aria-label="肌肉量旋钮在标准区间" width="44" height="44" viewBox="0 0 72 72"><circle cx="36" cy="36" r="27" fill="#E8E6E1" stroke="#2B2B2A" stroke-width="3"/><path d="M36 36L47.5 17.6" stroke="#2B2B2A" stroke-width="5" stroke-linecap="round"/></svg>
+      <span style="display: flex; flex-direction: column; white-space: nowrap"><span style="font-size: 14px; font-weight: 700; color: #6E6C68">肌肉量</span><span style="font-size: 30px; font-weight: 900; letter-spacing: -1px">52.5<span style="font-size: 15px"> kg</span></span></span>
+    </div>
+  </div>
+  <button style="margin-top: 16px; width: 100%; height: 56px; padding: 0 16px; border: 3px solid #2B2B2A; border-radius: 14px; background: #F4F3EF; box-shadow: 5px 5px 0 #2B2B2A; font: inherit; font-size: 16px; font-weight: 700; color: #2B2B2A; display: flex; align-items: center; gap: 10px; text-align: left"><span style="width: 12px; height: 12px; border-radius: 6px; background: #E2611B; border: 2px solid #2B2B2A"></span><span style="flex: 1">内脏脂肪 11 级，偏高</span><span>→</span></button>
+
+  <nav style="position: absolute; left: 16px; right: 16px; bottom: 28px; height: 56px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; font-size: 15px; font-weight: 700">
+    <a href="R8-B4-Dial.html" style="border: 3px solid #2B2B2A; border-radius: 10px; background: #2B2B2A; color: #F4F3EF; display: flex; align-items: center; justify-content: center; text-decoration: none">今天</a>
+    <a href="R8-B4-Dial.html" style="border: 3px solid #2B2B2A; border-radius: 10px; background: #F4F3EF; display: flex; align-items: center; justify-content: center; text-decoration: none">趋势</a>
+    <a href="R8-B4-Dial.html" style="border: 3px solid #2B2B2A; border-radius: 10px; background: #F4F3EF; display: flex; align-items: center; justify-content: center; text-decoration: none">设备</a>
+    <a href="R8-B4-Dial.html" style="border: 3px solid #2B2B2A; border-radius: 10px; background: #F4F3EF; display: flex; align-items: center; justify-content: center; text-decoration: none">设置</a>
+  </nav>
+</div>
+</body>
+</html>
