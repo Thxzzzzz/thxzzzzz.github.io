@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>待认领</title>
+<link rel="stylesheet" href="base.css">
+<script src="theme.js"></script>
+<style>
+  /* 待认领与认领（docs/05 A6、A2 冷启动）。琥珀色 --pending 只属于"还没归属的读数" */
+
+  /* 待认领提示条：一行、低调，不抢体重卡 */
+  .strip { display: flex; align-items: center; gap: 10px; height: 44px; margin: 0 16px 12px; padding: 0 14px 0 16px; border-radius: 22px; background: var(--pending-soft); font-size: 14px; cursor: pointer; }
+  .strip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pending); flex: none; }
+  .strip .msg { flex: 1; color: var(--pending-ink); }
+  .strip .go { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; color: var(--ink); }
+
+  /* 首页第 1 页卡片（与 story.html 一致的简化复刻） */
+  .deck { position: relative; height: var(--deck-h, 584px); }
+  .deck .card { position: absolute; top: 0; bottom: 0; left: 16px; width: 344px; }
+  .deck .peek { transform: translateX(352px) scale(.92); }
+  .w-body { position: relative; z-index: 2; padding: 30px 28px 0; }
+  .w-hero { display: flex; align-items: flex-start; margin-top: 14px; }
+  .w-hero .u { margin: 10px 0 0 8px; }
+  .delta { display: flex; align-items: baseline; gap: 10px; margin-top: 18px; font-size: 15px; }
+  .delta b { font: 500 24px var(--num); color: var(--accent); letter-spacing: -.3px; }
+  .delta span { color: var(--ink-2); }
+  .chart { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; }
+  .foot { position: absolute; left: 28px; right: 22px; bottom: 24px; z-index: 3; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-2); }
+  .foot .go { display: inline-flex; align-items: center; gap: 2px; }
+  .pager { display: flex; justify-content: center; gap: 6px; margin-top: 16px; }
+  .pager i { width: 6px; height: 6px; border-radius: 3px; background: var(--mute); }
+  .pager i.on { width: 20px; background: var(--ink); }
+
+  /* 认领弹层 */
+  .sheet h2 { font-size: 22px; font-weight: 600; }
+  .sheet .when { margin-top: 4px; }
+  .reading { display: flex; align-items: flex-start; margin-top: 18px; }
+  .reading .v { font: 300 72px/0.9 var(--num); letter-spacing: -3px; color: var(--pending); }
+  .reading .u { margin: 8px 0 0 6px; }
+  .people { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 26px; text-align: center; }
+  .person { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+  .avatar { position: relative; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); font-size: 19px; font-weight: 600; color: var(--ink); }
+  .person.on .avatar { background: var(--ink); color: var(--paper); box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink); }
+  .person .hint { height: 22px; }
+  .sheet .actions { margin-top: 22px; display: grid; gap: 4px; }
+  .sheet .fine { margin-top: 6px; text-align: center; }
+
+  /* 认领成功的轻提示 */
+  .toast { position: absolute; left: 20px; right: 20px; bottom: 104px; z-index: 15; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 8px 0 16px; border-radius: 28px; background: var(--night); color: var(--night-ink); box-shadow: 0 12px 30px rgba(40, 30, 20, .22); font-size: 14px; }
+  .toast .grow { flex: 1; }
+  .toast .undo { height: 40px; padding: 0 16px; border: 0; border-radius: 20px; background: rgba(255, 255, 255, .1); color: var(--night-accent); font-weight: 600; font-size: 14px; }
+
+  /* 请 TA 上秤 */
+  .wait { padding: 8px 28px 0; }
+  .wait .h1 { margin-top: 4px; }
+  .wait .lead { margin-top: 10px; }
+  .stage { position: relative; height: 300px; margin: 18px -28px 0; display: grid; place-items: center; }
+  .pulse { position: absolute; width: 236px; height: 214px; border-radius: 52px; border: 1.5px solid var(--accent); opacity: 0; animation: breathe 2.8s ease-out infinite; }
+  .pulse.b { animation-delay: 1.4s; }
+  @keyframes breathe { 0% { transform: scale(.86); opacity: .45; } 100% { transform: scale(1.14); opacity: 0; } }
+  [data-state="got"] .pulse { display: none; }
+  .scale-art { position: relative; filter: drop-shadow(0 18px 24px rgba(40, 30, 20, .10)); }
+  .count { display: flex; align-items: center; gap: 14px; margin-top: 4px; padding: 14px 16px; border-radius: var(--r-block); background: var(--paper); box-shadow: var(--shadow-paper); }
+  .count .ring { position: relative; width: 44px; height: 44px; flex: none; }
+  .count .ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 500 15px var(--num); }
+  .count .txt { flex: 1; font-size: 14px; }
+  .count .txt .note { margin-top: 2px; }
+  .wait-actions { position: absolute; left: 20px; right: 20px; bottom: 34px; display: grid; gap: 4px; }
+  .got-reading { display: flex; align-items: flex-start; margin-top: 14px; }
+  .got-reading .v { font: 300 96px/0.9 var(--num); letter-spacing: -4px; color: var(--pending); }
+  .got-reading .u { margin: 10px 0 0 8px; }
+</style>
+</head>
+<body>
+<main class="phone" id="phone">
+  <div id="sb"></div>
+
+  <!-- 首页：home-pending / sheet / claimed -->
+  <div data-state="home-pending sheet claimed">
+    <header class="head"><span class="t">我<i data-icon="caret-down" data-size="16" data-color="var(--ink-2)"></i></span><span class="meta">客厅的秤</span></header>
+
+    <div class="strip" data-state="home-pending sheet">
+      <span class="dot"></span><span class="msg">有一次读数还没归属 · 7:38</span><span class="go">这是谁<i data-icon="caret-right" data-size="14"></i></span>
+    </div>
+
+    <section class="deck" id="deck" aria-label="今天的报告，共 4 页">
+      <article class="card cream" style="z-index:2">
+        <div class="w-body">
+          <p class="kicker">今天 7:41</p>
+          <div class="w-hero"><span class="hero-num">68.25</span><span class="unit u">kg</span></div>
+          <div class="delta"><b>−0.15</b><span>比上次轻了一点</span></div>
+        </div>
+        <svg class="chart" id="c7" width="344" height="210" viewBox="0 0 344 210" aria-label="最近 7 次体重"></svg>
+        <div class="foot"><span>最近 7 次</span></div>
+      </article>
+      <article class="card cream peek" style="z-index:1" aria-hidden="true"></article>
+    </section>
+    <nav class="pager"><i class="on"></i><i></i><i></i><i></i></nav>
+    <div id="dock"></div>
+  </div>
+
+  <!-- 认领弹层 -->
+  <div class="scrim" data-state="sheet"></div>
+  <section class="sheet" data-state="sheet" aria-label="这次读数是谁的">
+    <div class="grip"></div>
+    <h2>这是谁？</h2>
+    <p class="note when">今天 7:38 · 客厅的秤</p>
+    <div class="reading"><span class="v">55.60</span><span class="unit u">kg</span></div>
+    <div class="people" role="radiogroup" aria-label="选择家人">
+      <div class="person on" role="radio" aria-checked="true"><span class="avatar">外</span><span>外婆</span><span class="hint"><span class="tag">最像</span></span></div>
+      <div class="person" role="radio" aria-checked="false"><span class="avatar">我</span><span>我</span><span class="hint"></span></div>
+      <div class="person" role="radio" aria-checked="false"><span class="avatar">乐</span><span>乐乐</span><span class="hint"></span></div>
+      <div class="person" role="radio" aria-checked="false"><span class="avatar">林</span><span>林溪</span><span class="hint"></span></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary">归给外婆</button>
+      <button class="btn quiet">都不是，忽略这次</button>
+    </div>
+    <p class="note fine">归属后会按 TA 的档案生成报告，之后也能改</p>
+  </section>
+
+  <!-- 认领成功 -->
+  <div class="toast" data-state="claimed" role="status">
+    <i data-icon="check-circle" data-size="22" data-color="var(--night-accent)"></i>
+    <span class="grow">已归给外婆，报告已生成</span>
+    <button class="undo">撤销</button>
+  </div>
+
+  <!-- 请 TA 上秤：wait / got -->
+  <div data-state="wait got">
+    <header class="nav"><span class="back"><i data-icon="caret-left" data-size="18"></i>家人</span><span class="title"></span><span></span></header>
+    <section class="wait">
+      <p class="kicker">新档案 · 乐乐</p>
+      <h1 class="h1" data-state="wait">请乐乐站上秤</h1>
+      <h1 class="h1" data-state="got">收到一次读数</h1>
+      <p class="note lead" data-state="wait">光脚踩上去，等秤面数字停住再下来。这段时间请让手机停在这个页面。</p>
+      <p class="note lead" data-state="got">今天 7:52 · 客厅的秤<br>确认后，下次秤就能自动认出乐乐</p>
+
+      <div class="stage" data-state="wait">
+        <span class="pulse"></span><span class="pulse b"></span>
+        <svg class="scale-art" id="art-wait" width="220" height="200" viewBox="0 0 220 200" aria-hidden="true"></svg>
+      </div>
+
+      <div class="count" data-state="wait">
+        <div class="ring">
+          <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+            <circle cx="22" cy="22" r="19" fill="none" stroke="var(--mute)" stroke-width="3"/>
+            <circle cx="22" cy="22" r="19" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-dasharray="95.5 119.4" transform="rotate(-90 22 22)"/>
+          </svg>
+          <b>48</b>
+        </div>
+        <div class="txt">正在等秤上报<p class="note">秤醒来后几秒内就会出现在这里</p></div>
+      </div>
+
+      <div class="got-reading" data-state="got"><span class="v">23.60</span><span class="unit u">kg</span></div>
+      <div class="stage" data-state="got" style="height:290px">
+        <svg class="scale-art" id="art-got" width="220" height="200" viewBox="0 0 220 200" aria-hidden="true"></svg>
+      </div>
+    </section>
+
+    <div class="wait-actions" data-state="wait">
+      <button class="btn line">跳过，之后在待认领里归属</button>
+    </div>
+    <div class="wait-actions" data-state="got">
+      <button class="btn primary">归给乐乐</button>
+      <button class="btn quiet">不是乐乐</button>
+    </div>
+  </div>
+</main>
+<script src="icons.js"></script>
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+  const state = UI.states('home-pending');
+  document.getElementById('sb').outerHTML = UI.statusbar();
+  document.getElementById('dock').outerHTML = UI.dock('today');
+  UI.hydrate();
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  // 首页这三种状态卡片都矮 56px：给提示条或成功提示留位置，页码和 dock 不挤
+  document.getElementById('deck').style.setProperty('--deck-h', '528px');
+
+  const smooth = pts => pts.reduce((d, p, i, a) => {
+    if (!i) return `M${p}`;
+    const p0 = a[i - 2] || a[i - 1], p1 = a[i - 1], p3 = a[i + 1] || p;
+    return `${d} C${[p1[0] + (p[0] - p0[0]) / 6, p1[1] + (p[1] - p0[1]) / 6]},${[p[0] - (p3[0] - p1[0]) / 6, p[1] - (p3[1] - p1[1]) / 6]},${p}`;
+  }, '');
+  {
+    const raw = WB.recent.map(p => p.v), w = 344, h = 210, top = 40, bottom = 64;
+    const s = raw.map((v, i) => i === 0 || i === raw.length - 1 ? v : (raw[i - 1] + v + raw[i + 1]) / 3);
+    const lo = Math.min(...s) - 0.1, hi = Math.max(...s) + 0.05;
+    const x = i => 28 + i * ((w - 72) / (s.length - 1)), y = v => top + (hi - v) / (hi - lo) * (h - top - bottom);
+    const pts = s.map((v, i) => [x(i), y(v)]), last = pts.at(-1), line = smooth(pts), acc = css('--accent');
+    // 与首页一致：最近 7 次的离散读数
+    const v = raw, vlo = Math.min(...v), vhi = Math.max(...v), card = css('--card'), ink = css('--ink'), ink2 = css('--ink-2');
+    const dx = i => 44 + i * (256 / (v.length - 1)), dy = t => 34 + (vhi - t) / (vhi - vlo) * 100;
+    const dpts = v.map((t, i) => `${dx(i)},${dy(t)}`).join(' '), base = dy(vlo) + 30;
+    let o = `<polygon points="${dx(0)},${base} ${dpts} ${dx(v.length - 1)},${base}" fill="${ink}" fill-opacity=".05"/>`;
+    o += `<polyline points="${dpts}" fill="none" stroke="${ink}" stroke-opacity=".22" stroke-width="1.5" stroke-linejoin="round"/>`;
+    v.forEach((t, i) => { o += i === v.length - 1 ? `<circle cx="${dx(i)}" cy="${dy(t)}" r="7" fill="${acc}" stroke="${card}" stroke-width="2"/>` : `<circle cx="${dx(i)}" cy="${dy(t)}" r="4" fill="${ink2}"/>`; });
+    o += `<text x="${dx(0) - 4}" y="${dy(v[0]) - 14}" font-size="13" fill="${ink2}" font-family="Outfit, -apple-system" stroke="${card}" stroke-width="6" paint-order="stroke">${WB.recent[0].day}  ${v[0].toFixed(2)}</text>`;
+    document.getElementById('c7').innerHTML = o;
+  }
+
+  // 秤的俯视线条画：白色钢化玻璃面板、十字分割线、中央电极、顶部显示窗
+  function scaleArt(id, reading) {
+    const ink2 = css('--ink-2'), line = THEME.v('--hair');
+    const lit = reading ? css('--pending') : THEME.v('--hair-2');
+    document.getElementById(id).innerHTML = `
+      <defs><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="${THEME.v('--bg')}"/></linearGradient></defs>
+      <rect x="10" y="10" width="200" height="180" rx="40" fill="url(#${id}g)" stroke="${ink2}" stroke-opacity=".35" stroke-width="1.5"/>
+      <line x1="10" y1="104" x2="210" y2="104" stroke="${line}" stroke-width="1.5"/>
+      <line x1="110" y1="58" x2="110" y2="190" stroke="${line}" stroke-width="1.5"/>
+      <circle cx="110" cy="104" r="11" fill="#ffffff" stroke="${ink2}" stroke-opacity=".35" stroke-width="1.5"/>
+      <text x="110" y="44" text-anchor="middle" font-family="Outfit, -apple-system" font-size="${reading ? 22 : 18}" font-weight="${reading ? 500 : 300}" fill="${lit}">${reading || '0.00'}</text>`;
+  }
+  scaleArt('art-wait');
+  scaleArt('art-got', '23.60');
+</script>
+</body>
+</html>

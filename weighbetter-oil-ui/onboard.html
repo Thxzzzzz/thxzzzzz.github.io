@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>首次启动</title>
+<link rel="stylesheet" href="base.css">
+<script src="theme.js"></script>
+<style>
+  /* 首次启动：没有 dock；每屏一个主角，主按钮固定在底部 */
+  .screen { position: absolute; inset: 47px 0 0; display: flex; flex-direction: column; padding: 0 20px 34px; }
+  .screen > .grow { flex: 1; min-height: 0; }
+  .foot { display: grid; gap: 4px; }
+
+  .brand { display: flex; align-items: center; gap: 8px; height: 56px; font-size: 15px; font-weight: 600; }
+  .brand i { width: 26px; height: 26px; border-radius: 8px; background: var(--ink); color: var(--paper); display: grid; place-items: center; }
+  .steps { display: flex; gap: 6px; }
+  .steps i { width: 6px; height: 6px; border-radius: 3px; background: var(--mute); }
+  .steps i.on { width: 20px; background: var(--ink); }
+
+  .title { margin-top: 18px; }
+  .title .note { margin-top: 8px; font-size: 14px; }
+
+  /* 发现：细线同心圆，中心是 NAS */
+  .radar { position: relative; width: 300px; height: 300px; margin: 36px auto 0; }
+  .radar svg.rings { position: absolute; inset: 0; }
+  .radar .core { position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px; border-radius: 50%; background: var(--paper); box-shadow: var(--shadow-paper); display: grid; place-items: center; color: var(--ink); }
+  .radar .sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0 300deg, var(--accent-soft) 340deg, var(--accent-soft) 360deg); -webkit-mask: radial-gradient(circle, transparent 40px, #000 41px); mask: radial-gradient(circle, transparent 40px, #000 41px); }
+  .scan { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; font-size: 13px; color: var(--ink-2); }
+  .scan b { font: 500 13px var(--num); color: var(--ink); }
+
+  /* 找到的服务器 */
+  .servers { margin-top: 26px; }
+  .srv { display: flex; align-items: center; gap: 14px; padding: 16px; }
+  .srv + .srv { border-top: 1px solid var(--line); }
+  .srv .ic { width: 44px; height: 44px; border-radius: 14px; background: var(--bg); display: grid; place-items: center; }
+  .srv .grow { flex: 1; }
+  .srv .name { font-size: 16px; font-weight: 600; }
+  .srv .addr { display: block; margin-top: 3px; font: 400 13px var(--num); color: var(--ink-2); }
+  .radio { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--mute); }
+  .radio.on { box-shadow: inset 0 0 0 7px var(--ink); }
+  .warn { display: flex; gap: 10px; margin-top: 14px; padding: 0 4px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+
+  /* 表单 */
+  .form { display: grid; gap: 12px; margin-top: 28px; }
+  .label { font-size: 13px; color: var(--ink-2); padding: 0 4px 6px; }
+  .field .mono { font-family: var(--num); }
+  .field .eye { color: var(--ink-2); }
+  .result { display: flex; align-items: center; gap: 12px; margin-top: 4px; padding: 14px 16px; border-radius: var(--r-ctrl); background: var(--paper); box-shadow: var(--shadow-paper); }
+  .result .ok { width: 32px; height: 32px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); display: grid; place-items: center; }
+  .result b { display: block; font-size: 15px; }
+  .result small { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-2); }
+  .result small .num { color: var(--ink); }
+  .hint { margin-top: 2px; padding: 0 4px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+
+  .server-pill { display: flex; align-items: center; gap: 12px; margin-top: 26px; padding: 12px 14px; border-radius: var(--r-ctrl); background: var(--paper); box-shadow: var(--shadow-paper); }
+  .server-pill .grow { flex: 1; }
+  .server-pill b { display: block; font-size: 15px; }
+  .server-pill small { display: block; margin-top: 2px; font: 400 13px var(--num); color: var(--ink-2); }
+  .server-pill .sw { font-size: 14px; color: var(--accent); }
+
+  /* 同意 */
+  .data-kinds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 24px; }
+  .kind { padding: 16px 12px 14px; border-radius: var(--r-ctrl); background: var(--paper); box-shadow: var(--shadow-paper); text-align: center; font-size: 14px; }
+  .kind span { display: grid; place-items: center; width: 40px; height: 40px; margin: 0 auto 10px; border-radius: 50%; background: var(--bg); }
+  .where { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding: 16px; border-radius: var(--r-ctrl); background: var(--night); color: var(--night-ink); }
+  .where .ic { width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, .1); display: grid; place-items: center; color: var(--night-accent); }
+  .where b { display: block; font-size: 15px; }
+  .where small { display: block; margin-top: 2px; font-size: 13px; color: var(--night-ink-2); line-height: 1.5; }
+  .uses { margin-top: 20px; display: grid; gap: 10px; }
+  .uses div { display: flex; gap: 10px; font-size: 14px; line-height: 1.55; }
+  .uses div span:first-child { color: var(--accent); margin-top: 2px; }
+  .decline { text-align: center; font-size: 13px; color: var(--ink-2); line-height: 1.6; margin-top: 2px; }
+</style>
+</head>
+<body>
+<main class="phone">
+  <div class="sb"><span>7:42</span><span>●●● ▮</span></div>
+
+  <!-- 1. 正在发现 -->
+  <section class="screen" data-state="discover">
+    <div class="brand"><i><i data-icon="scales" data-size="16"></i></i>WeighBetter</div>
+    <div class="title">
+      <h1 class="h1">正在家里的网络中查找<br>WeighBetter 服务器</h1>
+      <p class="note">请让手机连接家里的 WiFi，大约需要 3 秒</p>
+    </div>
+    <div class="grow">
+      <div class="radar">
+        <div class="sweep"></div>
+        <svg class="rings" viewBox="0 0 300 300" aria-hidden="true">
+          <circle cx="150" cy="150" r="148" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <circle cx="150" cy="150" r="112" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <circle cx="150" cy="150" r="76" fill="none" stroke="var(--mute)" stroke-width="1"/>
+          <circle cx="252" cy="96" r="4" fill="var(--accent)"/>
+          <circle cx="252" cy="96" r="10" fill="var(--accent)" fill-opacity=".16"/>
+        </svg>
+        <div class="core"><i data-icon="hard-drives" data-size="32"></i></div>
+      </div>
+      <p class="scan">正在搜索 · 还没找到时会再扫描一遍局域网</p>
+    </div>
+    <div class="foot">
+      <button class="btn line">手动输入地址</button>
+    </div>
+  </section>
+
+  <!-- 2. 找到服务器 -->
+  <section class="screen" data-state="found">
+    <div class="brand"><i><i data-icon="scales" data-size="16"></i></i>WeighBetter</div>
+    <div class="title">
+      <h1 class="h1">找到 2 台服务器</h1>
+      <p class="note">选一台你自己的设备连接</p>
+    </div>
+    <div class="grow">
+      <div class="list servers">
+        <div class="srv">
+          <span class="ic"><i data-icon="hard-drives" data-size="22"></i></span>
+          <span class="grow"><span class="name">WeighBetter @ nas</span><span class="addr">192.168.1.20:8080 · 版本 1.0.0</span></span>
+          <span class="radio on" aria-label="已选择"></span>
+        </div>
+        <div class="srv">
+          <span class="ic"><i data-icon="hard-drives" data-size="22"></i></span>
+          <span class="grow"><span class="name">WeighBetter @ mini</span><span class="addr">192.168.1.36:8080 · 版本 1.0.0</span></span>
+          <span class="radio" aria-label="未选择"></span>
+        </div>
+      </div>
+      <p class="warn"><i data-icon="info" data-size="18"></i><span>局域网里发现的服务器没有经过认证，请确认是你自己的设备。连接后仍需要登录。</span></p>
+    </div>
+    <div class="foot">
+      <button class="btn primary">连接 WeighBetter @ nas</button>
+      <button class="btn quiet">都不是，手动输入地址</button>
+    </div>
+  </section>
+
+  <!-- 3. 手动输入地址 -->
+  <section class="screen" data-state="manual">
+    <header class="nav" style="margin:0 -12px"><span class="back"><i data-icon="caret-left" data-size="18"></i>返回</span><span class="title">手动输入地址</span><span></span></header>
+    <div class="grow">
+      <div class="form" style="margin-top:18px">
+        <div>
+          <p class="label">服务器地址</p>
+          <label class="field focus"><i data-icon="link" data-size="20" data-color="var(--ink-2)"></i><input class="mono" value="http://192.168.1.20:8080" aria-label="服务器地址"></label>
+        </div>
+        <div class="result">
+          <span class="ok"><i data-icon="check" data-size="18"></i></span>
+          <span class="grow"><b>已连接</b><small>版本 <span class="num">1.0.0</span> · 这台服务器还没有初始化</small></span>
+        </div>
+        <p class="hint">地址通常是 NAS 的局域网 IP 加端口 8080，可以在 NAS 的 Docker 或容器管理页面里看到。</p>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn primary">下一步：创建主账号</button>
+      <button class="btn quiet">重新测试连接</button>
+    </div>
+  </section>
+
+  <!-- 4. 初始化：创建主账号 -->
+  <section class="screen" data-state="setup">
+    <div class="brand" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:8px"><i style="width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--paper);display:grid;place-items:center"><i data-icon="scales" data-size="16"></i></i>WeighBetter</span><span class="steps"><i class="on"></i><i></i></span></div>
+    <div class="title">
+      <h1 class="h1">创建主账号</h1>
+      <p class="note">这台服务器只有你创建的这一个主账号。家人的档案之后在 App 里添加。</p>
+    </div>
+    <div class="grow">
+      <div class="form">
+        <div><p class="label">账号</p><label class="field"><i data-icon="user" data-size="20" data-color="var(--ink-2)"></i><input value="zhou" aria-label="账号"></label></div>
+        <div><p class="label">密码</p><label class="field focus"><i data-icon="lock-simple" data-size="20" data-color="var(--ink-2)"></i><input type="password" value="w3ighbetter!" aria-label="密码"><span class="eye"><i data-icon="eye-slash" data-size="20"></i></span></label></div>
+        <div><p class="label">确认密码</p><label class="field"><i data-icon="lock-simple" data-size="20" data-color="var(--ink-2)"></i><input type="password" value="w3ighbetter!" aria-label="确认密码"></label></div>
+        <p class="hint">至少 8 位。忘记密码时只能在 NAS 上用命令行重置，请记好。</p>
+      </div>
+    </div>
+    <div class="foot">
+      <p class="note" style="text-align:center;margin-bottom:8px">服务器 <span class="num">192.168.1.20:8080</span></p>
+      <button class="btn primary">创建并进入</button>
+    </div>
+  </section>
+
+  <!-- 5. 登录 -->
+  <section class="screen" data-state="login">
+    <div class="brand"><i><i data-icon="scales" data-size="16"></i></i>WeighBetter</div>
+    <div class="title">
+      <h1 class="h1">欢迎回来</h1>
+      <p class="note">登录后会自动接收秤上报的数据</p>
+    </div>
+    <div class="grow">
+      <div class="server-pill">
+        <i data-icon="hard-drives" data-size="22"></i>
+        <span class="grow"><b>WeighBetter @ nas</b><small>192.168.1.20:8080</small></span>
+        <span class="sw">切换</span>
+      </div>
+      <div class="form" style="margin-top:20px">
+        <div><p class="label">账号</p><label class="field"><i data-icon="user" data-size="20" data-color="var(--ink-2)"></i><input value="zhou" aria-label="账号"></label></div>
+        <div><p class="label">密码</p><label class="field focus"><i data-icon="lock-simple" data-size="20" data-color="var(--ink-2)"></i><input type="password" value="w3ighbetter!" aria-label="密码"><span class="eye"><i data-icon="eye" data-size="20"></i></span></label></div>
+      </div>
+      <!-- 云端形态（/v1/server/info 的 mode=cloud）在这里显示“注册 · 忘记密码”的弱化入口；自部署形态不显示 -->
+    </div>
+    <div class="foot">
+      <button class="btn primary">登录</button>
+    </div>
+  </section>
+
+  <!-- 6. 敏感信息同意 -->
+  <section class="screen" data-state="consent">
+    <div class="brand" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:8px"><i style="width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--paper);display:grid;place-items:center"><i data-icon="scales" data-size="16"></i></i>WeighBetter</span><span class="steps"><i></i><i class="on"></i></span></div>
+    <div class="title">
+      <h1 class="h1">开始称重前，<br>需要你单独同意</h1>
+      <p class="note">身高、体重和体成分属于敏感个人信息</p>
+    </div>
+    <div class="grow">
+      <div class="data-kinds">
+        <div class="kind"><span><i data-icon="person" data-size="20"></i></span>身高与年龄</div>
+        <div class="kind"><span><i data-icon="scales" data-size="20"></i></span>体重</div>
+        <div class="kind"><span><i data-icon="drop" data-size="20"></i></span>体成分</div>
+      </div>
+      <div class="where">
+        <span class="ic"><i data-icon="hard-drives" data-size="22"></i></span>
+        <span><b>只保存在你自己的服务器上</b><small>192.168.1.20 · 不会上传到其他地方</small></span>
+      </div>
+      <div class="uses">
+        <div><span>•</span><span>计算体脂率、肌肉量等 20 项指标</span></div>
+        <div><span>•</span><span>判断每次称重是家里哪一位</span></div>
+        <div><span>•</span><span>随时可以在设置里导出或删除</span></div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn primary">同意并继续</button>
+      <button class="btn quiet">不同意</button>
+      <p class="decline">不同意也能进入 App，但无法使用称重和报告功能</p>
+    </div>
+  </section>
+</main>
+<script src="icons.js"></script>
+<script src="ui.js"></script>
+<script>
+  UI.states('discover');
+  UI.hydrate();
+</script>
+</body>
+</html>

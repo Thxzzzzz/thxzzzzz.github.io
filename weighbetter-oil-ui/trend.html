@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>趋势</title>
+<link rel="stylesheet" href="base.css">
+<script src="theme.js"></script>
+<style>
+  /* 趋势 Tab：走势 / 对比 / 目标 三个子页（docs/05 A8、A11） */
+  .who { display: inline-flex; align-items: center; gap: 2px; height: 32px; padding: 0 8px 0 12px; border-radius: 16px; background: var(--paper); box-shadow: 0 0 0 1px var(--line); font-size: 15px; font-weight: 500; }
+
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 4px 16px 0; padding: 3px; border-radius: 14px; background: var(--mute); }
+  .seg span { height: 34px; display: grid; place-items: center; border-radius: 11px; font-size: 14px; color: var(--ink-strong-2); }
+  .seg span.on { background: var(--paper); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(40, 30, 20, .08); }
+
+  .metrics { display: flex; gap: 22px; padding: 18px 24px 0; font-size: 15px; color: var(--ink-2); }
+  .metrics span { position: relative; padding-bottom: 8px; }
+  .metrics span.on { color: var(--ink); font-weight: 600; }
+  .metrics span.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 1px; background: var(--ink); }
+
+  .main { margin: 10px 16px 0; height: 540px; }
+  .main .top { display: flex; justify-content: space-between; align-items: center; padding: 22px 22px 0 24px; }
+  .range { display: flex; gap: 2px; font-size: 13px; color: var(--ink-2); }
+  .range span { height: 28px; padding: 0 9px; display: grid; place-items: center; border-radius: 14px; white-space: nowrap; }
+  .range span.on { background: var(--ink); color: var(--paper); font-weight: 500; }
+  .big { display: flex; align-items: flex-start; padding: 14px 24px 0; }
+  .big .v { font: 300 72px/0.95 var(--num); letter-spacing: -3px; }
+  .big .u { font: 400 16px var(--num); color: var(--ink-2); margin: 8px 0 0 6px; }
+  .big-note { padding: 8px 24px 0; font-size: 14px; color: var(--ink-2); }
+  .chart { display: block; position: absolute; left: 0; right: 0; top: 196px; }
+  .stats { position: absolute; left: 24px; right: 24px; bottom: 22px; display: grid; grid-template-columns: repeat(3, 1fr); padding-top: 14px; border-top: 1px solid var(--line); }
+  .stats div + div { padding-left: 16px; border-left: 1px solid var(--line); }
+  .stats span { display: block; font-size: 13px; color: var(--ink-2); }
+  .stats b { display: block; font: 400 22px var(--num); margin-top: 4px; letter-spacing: -.3px; }
+  .stats b small { font-size: 13px; color: var(--ink-2); margin-left: 2px; }
+
+  /* 对比 */
+  .pick { display: grid; grid-template-columns: 1fr 28px 1fr; align-items: center; margin: 16px 16px 0; }
+  .pick .d { padding: 12px 14px; border-radius: var(--r-ctrl); background: var(--paper); box-shadow: var(--shadow-paper); }
+  .pick .d span { display: block; font-size: 12px; color: var(--ink-2); }
+  .pick .d b { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; font-size: 16px; font-weight: 600; }
+  .pick .d small { display: block; font: 400 13px var(--num); color: var(--ink-2); margin-top: 2px; }
+  .pick .arrow { display: grid; place-items: center; color: var(--ink-2); }
+  .legend { display: flex; gap: 16px; justify-content: flex-end; padding: 14px 24px 8px; font-size: 12px; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .o { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-2); }
+  .legend .f { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
+  .cmp { margin: 0 16px; }
+  .cmp .row { display: grid; grid-template-columns: 120px 1fr 64px; gap: 12px; min-height: 52px; }
+  .cmp .name { font-size: 15px; }
+  .cmp .name small { display: block; font: 400 12px var(--num); color: var(--ink-2); margin-top: 2px; white-space: nowrap; }
+  .dumb { position: relative; height: 16px; }
+  .dumb::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; border-radius: 1px; background: var(--mute); }
+  .dumb .seg-line { position: absolute; top: 7px; height: 2px; background: var(--ink-2); }
+  .dumb .a, .dumb .b { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; }
+  .dumb .a { background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--ink-2); }
+  .dumb .b { background: var(--ink); box-shadow: 0 0 0 2px var(--paper); }
+  .dumb.worse .b { background: var(--accent); }
+  .dumb.worse .seg-line { background: var(--accent); }
+  .cmp .d { text-align: right; font: 500 16px var(--num); }
+  .cmp .d small { display: block; font: 400 12px var(--sans); color: var(--ink-2); margin-top: 1px; }
+  .cmp .d.worse { color: var(--accent); }
+  .cmp .d.worse small { color: var(--accent); }
+  .cmp-note { padding: 14px 24px 0; }
+
+  /* 目标 */
+  .goal { margin: 12px 16px 0; padding: 20px 24px 20px; }
+  .goal .big { padding: 12px 0 0; }
+  .goal .big .v { font-size: 64px; letter-spacing: -2.5px; }
+  .ruler { position: relative; margin-top: 42px; }
+  .ruler .bar { position: relative; height: 8px; border-radius: 4px; background: var(--mute); }
+  .ruler .done { position: absolute; top: 0; bottom: 0; right: 0; border-radius: 4px; background: var(--accent); }
+  .ruler .now { position: absolute; top: -6px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 5px var(--accent), 0 2px 6px rgba(0, 0, 0, .15); }
+  .ruler .flag { position: absolute; top: -34px; transform: translateX(-50%); font: 500 14px var(--num); white-space: nowrap; }
+  .ruler .ends { display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; color: var(--ink-2); }
+  .ruler .ends b { display: block; font: 400 17px var(--num); color: var(--ink); margin-top: 2px; }
+  .ruler .ends div:last-child { text-align: right; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .split div + div { padding-left: 18px; border-left: 1px solid var(--line); }
+  .split span { display: block; font-size: 13px; color: var(--ink-2); }
+  .split b { display: block; font: 400 26px var(--num); margin-top: 4px; }
+  .split b small { font-size: 14px; color: var(--ink-2); margin-left: 3px; }
+  .est { margin: 10px 16px 0; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; }
+  .est .body { font-size: 15px; }
+  .est .note { margin-top: 4px; }
+  .goal-rows { margin: 10px 16px 0; }
+  .goal-actions { margin: 12px 16px 0; }
+</style>
+</head>
+<body>
+<main class="phone">
+  <div id="sb"></div>
+  <header class="head"><span class="t">趋势</span><span class="who">我<i data-icon="caret-down" data-size="16"></i></span></header>
+
+  <nav class="seg" aria-label="趋势子页">
+    <span data-tab="trend">走势</span><span data-tab="compare">对比</span><span data-tab="goal">目标</span>
+  </nav>
+
+  <!-- 走势：体重 / 体脂率 -->
+  <section data-state="weight fat">
+    <nav class="metrics" aria-label="指标">
+      <span data-m="weight">体重</span><span data-m="fat">体脂率</span><span>肌肉量</span><span>内脏脂肪</span>
+    </nav>
+    <article class="card cream main">
+      <div class="top">
+        <span class="kicker">称了 23 次</span>
+        <span class="range"><span>7 天</span><span class="on">30 天</span><span>90 天</span><span>全部</span></span>
+      </div>
+      <div class="big" data-state="weight"><span class="v num">−1.35</span><span class="u">kg</span></div>
+      <p class="big-note" data-state="weight">从 69.60 到 68.25，离目标还差 2.25 kg</p>
+      <div class="big" data-state="fat"><span class="v num">−1.2</span><span class="u">%</span></div>
+      <p class="big-note" data-state="fat">从 19.8% 到 18.6%，一直在标准范围里</p>
+      <svg class="chart" id="chart" width="358" height="250" viewBox="0 0 358 250" aria-label="最近 30 天走势"></svg>
+      <div class="stats" id="stats"></div>
+    </article>
+  </section>
+
+  <!-- 两次测量对比 -->
+  <section data-state="compare">
+    <div class="pick">
+      <div class="d"><span>那天</span><b>9 月 20 日<i data-icon="caret-down" data-size="14" data-color="var(--ink-2)"></i></b><small>7:46 · 69.60 kg</small></div>
+      <span class="arrow"><i data-icon="caret-right" data-size="18"></i></span>
+      <div class="d"><span>这次</span><b>今天<i data-icon="caret-down" data-size="14" data-color="var(--ink-2)"></i></b><small>7:41 · 68.25 kg</small></div>
+    </div>
+    <div class="legend"><span><i class="o"></i>那天</span><span><i class="f"></i>今天</span></div>
+    <div class="list cmp" id="cmp"></div>
+    <p class="note cmp-note">变好的项用墨色，变差的项用橙色并写明方向。肌肉量、基础代谢以升高为好。</p>
+  </section>
+
+  <!-- 目标 -->
+  <section data-state="goal">
+    <article class="card cream goal">
+      <p class="kicker">目标体重</p>
+      <div class="big"><span class="v num">66.0</span><span class="u">kg</span></div>
+      <div class="ruler" aria-label="从 69.60 到 66.0，已经走到 68.25">
+        <div class="bar"><span class="done" id="done"></span></div>
+        <span class="now" id="now"></span>
+        <span class="flag" id="flag">今天 68.25</span>
+        <div class="ends"><div>起点 9 月 20 日<b>69.60</b></div><div>目标<b>66.0</b></div></div>
+      </div>
+      <div class="split">
+        <div><span>已经减了</span><b class="num">1.35<small>kg</small></b></div>
+        <div><span>还差</span><b class="num">2.25<small>kg</small></b></div>
+      </div>
+    </article>
+    <div class="block est">
+      <i data-icon="clock" data-size="22" data-color="var(--ink-2)"></i>
+      <div><p class="body">按最近 30 天的速度，还需要约 7 周</p><p class="note">估算：用最近 30 天平均每周减 0.32 kg 推算，只作参考。</p></div>
+    </div>
+    <div class="list goal-rows">
+      <div class="row"><span class="grow">体脂率目标<span class="sub">还没设置</span></span><span class="trail">设置<i data-icon="caret-right" data-size="14"></i></span></div>
+    </div>
+    <div class="goal-actions"><button class="btn primary">修改目标</button></div>
+  </section>
+
+  <div id="dock"></div>
+</main>
+<script src="icons.js"></script>
+<script src="ui.js"></script>
+<script>
+  const state = UI.states('weight');
+  document.getElementById('sb').outerHTML = UI.statusbar();
+  document.getElementById('dock').outerHTML = UI.dock('trend');
+  const sub = state === 'compare' ? 'compare' : state === 'goal' ? 'goal' : 'trend';
+  document.querySelectorAll('.seg span').forEach(s => s.classList.toggle('on', s.dataset.tab === sub));
+  document.querySelectorAll('.metrics span').forEach(s => s.classList.toggle('on', s.dataset.m === state));
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  // 最近 30 天：9/20 起，有的天没称；最后 7 次与首页一致
+  const DAYS = ['9/20', '9/21', '9/23', '9/24', '9/25', '9/27', '9/28', '9/30', '10/1', '10/3', '10/5', '10/6', '10/8', '10/9', '10/11', '10/12', '10/13', '10/14', '10/15', '10/16', '10/17', '10/18', '10/19'];
+  const WEIGHT = [69.60, 69.42, 69.55, 69.30, 69.38, 69.12, 69.20, 69.05, 69.18, 68.96, 68.88, 69.02, 68.80, 68.95, 68.84, 68.90, 68.92, 68.70, 68.76, 68.58, 68.50, 68.40, 68.25];
+  const FAT = [19.8, 19.7, 19.8, 19.6, 19.6, 19.5, 19.5, 19.4, 19.5, 19.3, 19.2, 19.3, 19.1, 19.2, 19.0, 19.1, 19.0, 18.9, 18.9, 18.8, 18.7, 18.7, 18.6];
+  const offset = d => { const [m, day] = d.split('/').map(Number); return (m === 9 ? day - 20 : 10 + day) ; };
+
+  const smooth = pts => pts.reduce((d, p, i, a) => {
+    if (!i) return `M${p}`;
+    const p0 = a[i - 2] || a[i - 1], p1 = a[i - 1], p3 = a[i + 1] || p;
+    return `${d} C${[p1[0] + (p[0] - p0[0]) / 6, p1[1] + (p[1] - p0[1]) / 6]},${[p[0] - (p3[0] - p1[0]) / 6, p[1] - (p3[1] - p1[1]) / 6]},${p}`;
+  }, '');
+
+  // 细线 + 渐隐面积；可选目标线、标准区间带、按住查看的示例
+  function chart(series, { lo, hi, goal, band, unit, digits, probe }) {
+    const W = 358, H = 250, top = 34, bottom = 40, left = 24, right = 40;
+    const x = d => left + offset(d) / 29 * (W - left - right);
+    const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
+    const pts = series.map((v, i) => [x(DAYS[i]), y(v)]), last = pts.at(-1), line = smooth(pts);
+    const acc = css('--accent'), ink = css('--ink'), ink2 = css('--ink-2');
+    let o = '';
+    if (band) {
+      const by = y(Math.min(band[1], hi));
+      o += `<rect x="0" y="${by}" width="${W}" height="${H - bottom - by}" fill="${ink}" fill-opacity=".035"/>`;
+      o += `<line x1="0" x2="${W}" y1="${by}" y2="${by}" stroke="${ink2}" stroke-opacity=".35" stroke-width="1" stroke-dasharray="3 4"/>`;
+      o += `<text x="${left}" y="${by - 8}" font-size="12" fill="${ink2}" font-family="-apple-system">标准 ${band[0]}–${band[1]}%</text>`;
+    }
+    if (goal) {
+      const gy = y(goal);
+      o += `<line x1="${left}" x2="${W - right + 16}" y1="${gy}" y2="${gy}" stroke="${ink2}" stroke-opacity=".4" stroke-width="1" stroke-dasharray="3 4"/>`;
+      o += `<text x="${left}" y="${gy - 8}" font-size="12" fill="${ink2}" font-family="-apple-system">目标 ${goal.toFixed(1)}</text>`;
+    }
+    o += `<path d="${line} L${last[0]},${H - bottom} L${pts[0][0]},${H - bottom} Z" fill="${acc}" fill-opacity=".08"/>`;
+    o += `<path d="${line}" fill="none" stroke="${acc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    if (probe != null) {
+      const [px, py] = pts[probe], label = `${DAYS[probe]} · ${series[probe].toFixed(digits)}`;
+      o += `<line x1="${px}" x2="${px}" y1="${top - 6}" y2="${H - bottom}" stroke="${ink}" stroke-opacity=".35" stroke-width="1"/>`;
+      o += `<circle cx="${px}" cy="${py}" r="5" fill="${css('--paper')}" stroke="${ink}" stroke-width="2"/>`;
+      o += `<rect x="${px - 50}" y="${top - 30}" width="100" height="26" rx="13" fill="${ink}"/>`;
+      o += `<text x="${px}" y="${top - 12}" text-anchor="middle" font-size="13" fill="${css('--paper')}" font-family="Outfit, -apple-system">${label}${unit}</text>`;
+    }
+    o += `<circle cx="${last[0]}" cy="${last[1]}" r="5" fill="${acc}" stroke="${css('--card')}" stroke-width="2"/>`;
+    o += `<text x="${last[0] + 2}" y="${last[1] - 16}" text-anchor="middle" font-size="14" font-weight="500" fill="${ink}" font-family="Outfit, -apple-system">${series.at(-1).toFixed(digits)}</text>`;
+    [['9/20', '9/20'], ['10/5', '10/5'], ['10/19', '今天']].forEach(([d, t]) =>
+      o += `<text x="${x(d)}" y="${H - 14}" text-anchor="middle" font-size="12" fill="${ink2}" font-family="Outfit, -apple-system">${t}</text>`);
+    document.getElementById('chart').innerHTML = o;
+  }
+
+  function stats(series, unit, digits) {
+    const avg = series.reduce((s, v) => s + v, 0) / series.length;
+    document.getElementById('stats').innerHTML = [['最低', Math.min(...series)], ['最高', Math.max(...series)], ['平均', avg]]
+      .map(([n, v]) => `<div><span>${n}</span><b class="num">${v.toFixed(digits)}<small>${unit}</small></b></div>`).join('');
+  }
+
+  if (state === 'weight') {
+    chart(WEIGHT, { lo: 65.6, hi: 69.8, goal: 66.0, unit: '', digits: 2, probe: 19 });
+    stats(WEIGHT, 'kg', 2);
+  }
+  if (state === 'fat') {
+    chart(FAT, { lo: 17.4, hi: 22.6, band: [11, 22], unit: '%', digits: 1 });
+    stats(FAT, '%', 1);
+  }
+
+  // 两次测量对比：better 表示这一项往好的方向变
+  if (state === 'compare') {
+    const rows = [
+      ['体重', 69.60, 68.25, 'kg', 2, 66, 72, true],
+      ['体脂率', 19.8, 18.6, '%', 1, 15, 24, true],
+      ['肌肉量', 51.6, 52.1, 'kg', 1, 48, 56, true],
+      ['内脏脂肪', 12, 11, '级', 0, 6, 16, true],
+      ['水分率', 54.6, 55.2, '%', 1, 50, 60, true],
+      ['基础代谢', 1592, 1586, 'kcal', 0, 1540, 1640, false],
+      ['骨量', 2.9, 2.9, 'kg', 1, 2.5, 3.3, null],
+    ];
+    document.getElementById('cmp').innerHTML = rows.map(([n, a, b, u, f, lo, hi, better]) => {
+      const d = b - a, span = Math.max(Math.abs(d), (hi - lo) / 10) * 1.6, mid = (a + b) / 2;
+      const p = v => (v - (mid - span)) / (2 * span) * 100;
+      const worse = better === false;
+      const word = d === 0 ? '持平' : d > 0 ? '上升' : '下降';
+      const sign = d > 0 ? '+' : d < 0 ? '−' : '';
+      return `<div class="row"><span class="name">${n}<small>${a.toFixed(f)} → ${b.toFixed(f)} ${u}</small></span>
+        <div class="dumb ${worse ? 'worse' : ''}"><span class="seg-line" style="left:${Math.min(p(a), p(b))}%;width:${Math.abs(p(b) - p(a))}%"></span><span class="a" style="left:${p(a)}%"></span><span class="b" style="left:${p(b)}%"></span></div>
+        <span class="d ${worse ? 'worse' : ''}">${d === 0 ? '0' : sign + Math.abs(d).toFixed(f)}<small>${word}</small></span></div>`;
+    }).join('');
+  }
+
+  // 目标进度：从起点 69.60 走向 66.0，已完成段在右侧（体重往下走）
+  if (state === 'goal') {
+    const start = 69.60, target = 66.0, now = 68.25;
+    const pct = (start - now) / (start - target) * 100;
+    // 尺子左端是起点，右端是目标
+    document.getElementById('done').style.cssText = `left:0;right:auto;width:${pct}%`;
+    document.getElementById('now').style.left = `${pct}%`;
+    document.getElementById('flag').style.left = `${pct}%`;
+  }
+
+  UI.hydrate();
+</script>
+</body>
+</html>

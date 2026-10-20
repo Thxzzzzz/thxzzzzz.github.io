@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>设置</title>
+<link rel="stylesheet" href="base.css">
+<script src="theme.js"></script>
+<style>
+  /* 设置、家人与隐私。一级页带 dock；二级页不带 dock，底部留给本页的动作 */
+  .scroll { padding: 0 16px; }
+  .grow { flex: 1; min-width: 0; }
+  /* 强调色作文字时压深一档，保证小字对比度 */
+  .nav .act, .editor-head .change, .tag.accent { color: var(--accent-ink); }
+  .gap { height: 14px; }
+
+  .me { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
+  .avatar { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--mute); font: 500 20px var(--num); color: var(--ink); }
+  .avatar.sm { width: 36px; height: 36px; font-size: 15px; }
+  .avatar.lg { width: 84px; height: 84px; font-size: 32px; }
+  .avatar.self { background: var(--accent-soft); color: var(--accent); }
+  .me .name { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .me .sub { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+  .me .num { font-size: 14px; color: var(--ink); }
+
+  .row .ic { color: var(--ink-2); }
+  .row .label { font-size: 15px; }
+  .row.tall { min-height: 64px; }
+
+  /* 分段控件 */
+  .seg { display: inline-grid; grid-auto-flow: column; gap: 2px; padding: 2px; border-radius: 10px; background: var(--mute); font-size: 13px; }
+  .seg span { min-width: 44px; padding: 5px 10px; border-radius: 8px; text-align: center; color: var(--ink-2); }
+  .seg span.on { background: var(--paper); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+  .seg.wide { display: grid; grid-auto-columns: 1fr; width: 100%; }
+
+  .exits { display: flex; justify-content: center; gap: 28px; margin-top: 18px; font-size: 14px; }
+  .exits .out { color: var(--ink-2); }
+  .exits .del { color: var(--danger); }
+
+  .lock { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--ink-2); }
+  .bottom { position: absolute; left: 16px; right: 16px; bottom: 34px; }
+
+  .editor-head { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0 22px; }
+  .editor-head .change { font-size: 14px; }
+  .row .value { font-size: 15px; color: var(--ink); }
+  .row .value.num { font-family: var(--num); font-size: 16px; }
+  .danger-zone { margin-top: 22px; text-align: center; }
+  .danger-zone .del { font-size: 15px; color: var(--danger); font-weight: 500; }
+  .danger-zone .note { margin-top: 6px; }
+
+  .explain { padding: 12px 4px 0; }
+
+  .opt { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 4px; font-size: 16px; }
+  .opt + .opt { border-top: 1px solid var(--line); }
+  .opt .grow { flex: 1; }
+  .opt .grow small { font-size: 13px; color: var(--ink-2); margin-left: 6px; }
+  .opt .tick { color: var(--accent); }
+  .convert { margin-top: 18px; padding: 16px; border-radius: var(--r-ctrl); background: var(--bg); font-family: var(--num); font-size: 17px; text-align: center; color: var(--ink); }
+  .convert span { color: var(--ink-2); margin: 0 6px; font-size: 15px; }
+</style>
+</head>
+<body>
+<main class="phone" id="phone">
+  <div id="sb"></div>
+
+  <!-- 设置主页（main，也是 unit 弹层的底） -->
+  <section data-state="main unit">
+    <header class="head"><span class="t">设置</span></header>
+    <div class="scroll">
+      <div class="card cream me">
+        <span class="avatar self">周</span>
+        <div class="grow">
+          <div class="name">周岩<span class="tag accent">本人</span></div>
+          <div class="sub">男 · <span class="num">34</span> 岁 · <span class="num">175</span> cm</div>
+        </div>
+        <i data-icon="caret-right" data-size="16" data-color="var(--ink-2)"></i>
+      </div>
+
+      <div class="gap"></div>
+      <div class="list">
+        <div class="row"><i data-icon="users" class="ic"></i><span class="grow label">家人</span><span class="trail">4 人<i data-icon="caret-right" data-size="14"></i></span></div>
+        <div class="row"><i data-icon="scales" class="ic"></i><span class="grow label">体重单位</span><span class="seg"><span class="on">kg</span><span>斤</span><span>lb</span></span></div>
+        <div class="row"><i data-icon="bell" class="ic"></i><span class="grow label">称重后提醒我</span><span class="switch on"></span></div>
+        <a class="row" href="theme.html" style="color:inherit;text-decoration:none"><i data-icon="palette" class="ic"></i><span class="grow label">外观与主题</span><span class="trail"><span id="theme-name"></span><i data-icon="caret-right" data-size="14"></i></span></a>
+        <div class="row"><i data-icon="shield-check" class="ic"></i><span class="grow label">隐私与数据可见性</span><span class="trail">未公开<i data-icon="caret-right" data-size="14"></i></span></div>
+      </div>
+
+      <div class="gap"></div>
+      <div class="list">
+        <div class="row tall"><i data-icon="hard-drives" class="ic"></i><span class="grow"><span class="label">服务器</span><span class="sub">WeighBetter @ nas · <span class="num">192.168.1.20</span></span></span><i data-icon="caret-right" data-size="14" data-color="var(--ink-2)"></i></div>
+        <div class="row"><i data-icon="download-simple" class="ic"></i><span class="grow label">导出数据（CSV）</span><i data-icon="caret-right" data-size="14" data-color="var(--ink-2)"></i></div>
+        <div class="row"><i data-icon="info" class="ic"></i><span class="grow label">关于 WeighBetter</span><span class="trail"><span class="num">1.0.0</span><i data-icon="caret-right" data-size="14"></i></span></div>
+      </div>
+
+      <div class="exits"><span class="out">退出登录</span><span class="del">注销账号</span></div>
+    </div>
+    <div id="dock"></div>
+  </section>
+
+  <!-- 家人列表：不显示任何人的体重 -->
+  <section data-state="members">
+    <header class="nav"><span class="back"><i data-icon="caret-left" data-size="18"></i>设置</span><span class="title">家人</span><span></span></header>
+    <div class="scroll">
+      <div class="list">
+        <div class="row tall"><span class="avatar sm self">周</span><span class="grow"><span class="label">周岩</span><span class="sub">有账号</span></span><span class="tag accent">本人</span></div>
+        <div class="row tall"><span class="avatar sm">林</span><span class="grow"><span class="label">林溪</span><span class="sub">有自己的账号 · 没有向家人公开</span></span><span class="lock"><i data-icon="lock-simple" data-size="16"></i>不可查看</span></div>
+        <div class="row tall"><span class="avatar sm">外</span><span class="grow"><span class="label">外婆</span><span class="sub">没有账号 · 家里都能看</span></span><i data-icon="caret-right" data-size="14" data-color="var(--ink-2)"></i></div>
+        <div class="row tall"><span class="avatar sm">乐</span><span class="grow"><span class="label">乐乐</span><span class="sub">没有账号 · 家里都能看</span></span><i data-icon="caret-right" data-size="14" data-color="var(--ink-2)"></i></div>
+      </div>
+      <p class="note explain">秤会按体重和阻抗认出是谁。没有账号的家人由添加他们的人管理，等他们有了自己的账号，可以把档案和记录转过去。</p>
+    </div>
+    <div class="bottom"><button class="btn line"><i data-icon="user-plus" data-size="20"></i>添加家人</button></div>
+  </section>
+
+  <!-- 编辑档案：外婆 -->
+  <section data-state="member-edit">
+    <header class="nav"><span class="back"><i data-icon="caret-left" data-size="18"></i>家人</span><span class="title">编辑档案</span><span class="act">保存</span></header>
+    <div class="scroll">
+      <div class="editor-head"><span class="avatar lg">外</span><span class="change">更换头像</span></div>
+      <div class="list">
+        <div class="row"><span class="grow label">昵称</span><span class="value">外婆</span></div>
+        <div class="row"><span class="grow label">性别</span><span class="seg"><span>男</span><span class="on">女</span></span></div>
+        <div class="row"><span class="grow label">出生日期</span><span class="value num">1952 · 03 · 08</span></div>
+        <div class="row"><span class="grow label">身高</span><span class="value"><span class="num">158</span> cm</span></div>
+        <div class="row"><span class="grow label">设为本人</span><span class="switch"></span></div>
+      </div>
+      <p class="note explain">改身高或出生日期只影响之后的测量，历史报告不变。</p>
+      <div class="danger-zone">
+        <div class="del">删除这个人</div>
+        <p class="note">删除后，外婆的测量会回到待认领，可以再归给别人。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 隐私与数据可见性（A14） -->
+  <section data-state="privacy">
+    <header class="nav"><span class="back"><i data-icon="caret-left" data-size="18"></i>设置</span><span class="title">隐私</span><span></span></header>
+    <div class="scroll">
+      <div class="list">
+        <div class="row tall"><span class="grow label">让家人看到我的数据</span><span class="switch"></span></div>
+      </div>
+      <p class="note explain">已关闭。家人看不到你的体重、报告和趋势，认领时也不会提示“最像你”。秤认不准时，那次读数仍可能出现在家人的待认领里。</p>
+
+      <div class="gap"></div>
+      <p class="section-label">没有账号的家人</p>
+      <div class="list">
+        <div class="row"><span class="avatar sm">外</span><span class="grow label">外婆</span><span class="trail">家里都能看</span></div>
+        <div class="row"><span class="avatar sm">乐</span><span class="grow label">乐乐</span><span class="trail">家里都能看</span></div>
+      </div>
+      <p class="note explain">他们有了自己的账号后，可以自己决定是否公开。</p>
+
+      <div class="gap"></div>
+      <p class="section-label">我的数据</p>
+      <div class="list">
+        <div class="row"><i data-icon="download-simple" class="ic"></i><span class="grow label">导出我的数据</span><i data-icon="caret-right" data-size="14" data-color="var(--ink-2)"></i></div>
+        <div class="row"><i data-icon="trash" data-color="var(--danger)"></i><span class="grow label" style="color:var(--danger)">注销账号</span><i data-icon="caret-right" data-size="14" data-color="var(--ink-2)"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 体重单位弹层 -->
+  <div class="scrim" data-state="unit"></div>
+  <section class="sheet" data-state="unit" aria-label="体重单位">
+    <div class="grip"></div>
+    <h2 class="h2" style="margin-bottom:8px">体重单位</h2>
+    <div class="opt"><span class="grow">公斤<small>kg</small></span><i data-icon="check" class="tick" data-size="20"></i></div>
+    <div class="opt"><span class="grow">斤</span></div>
+    <div class="opt"><span class="grow">磅<small>lb</small></span></div>
+    <div class="convert">68.25 kg<span>=</span>136.5 斤<span>=</span>150.5 lb</div>
+    <p class="note" style="text-align:center;margin-top:10px">只改变显示，记录本身不变。</p>
+    <button class="btn primary" style="margin-top:18px">完成</button>
+  </section>
+</main>
+<script src="icons.js"></script>
+<script src="ui.js"></script>
+<script>
+  // ?state=main | members | member-edit | privacy | unit
+  document.getElementById('sb').outerHTML = UI.statusbar();
+  document.getElementById('dock').outerHTML = UI.dock('settings');
+  UI.states('main');
+  UI.hydrate();
+</script>
+<script>document.getElementById("theme-name").textContent = THEME.resolve(THEME.current).name;</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WeighBetter 设计稿</title>
+<link rel="stylesheet" href="base.css">
+<script src="theme.js"></script>
+<style>
+  /* 手机预览用的目录页：列出每个页面和它的全部状态 */
+  body { padding: 24px 16px 48px; }
+  h1 { font-size: 24px; font-weight: 600; }
+  .lead { margin: 6px 0 24px; font-size: 14px; color: var(--ink-2); }
+  section { margin-bottom: 20px; }
+  .list a { display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 16px; color: var(--ink); text-decoration: none; font-size: 15px; }
+  .list a + a { border-top: 1px solid var(--line); }
+  .list a span { font-size: 13px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+  <h1>WeighBetter 设计稿</h1>
+  <p class="lead">体脂秤 App 的完整页面原型：快报式首页，默认 Braun 暖灰配色。每页是一块 390 宽的手机画布，在「设置 › 外观与主题」里换主题，所有页面一起变。</p>
+  <div id="groups"></div>
+<script>
+  const groups = [
+    ['首页 · 今天的报告', 'story.html', [['第 1 页 · 体重', 'page=1'], ['第 2 页 · 成分', 'page=2'], ['第 3 页 · 提醒', 'page=3'], ['第 4 页 · 趋势', 'page=4']]],
+    ['待认领与认领', 'claim.html', [['首页有待认领', 'state=home-pending'], ['这是谁？', 'state=sheet'], ['认领成功', 'state=claimed'], ['请 TA 上秤', 'state=wait'], ['收到读数', 'state=got']]],
+    ['完整报告', 'report.html', [['完整报告', 'state=full'], ['区间未定稿', 'state=no-range'], ['仅体重', 'state=weight-only'], ['指标解释', 'state=explain']]],
+    ['趋势', 'trend.html', [['体重', 'state=weight'], ['体脂率', 'state=fat'], ['两次对比', 'state=compare'], ['目标', 'state=goal']]],
+    ['设备与配网', 'device.html', [['设备', 'state=list'], ['准备', 'state=prepare'], ['输入密码', 'state=password'], ['配网进度', 'state=progress'], ['成功', 'state=done'], ['失败', 'state=fail']]],
+    ['设置与成员', 'settings.html', [['设置', 'state=main'], ['外观与主题', 'theme.html'], ['家人', 'state=members'], ['编辑档案', 'state=member-edit'], ['隐私', 'state=privacy'], ['单位', 'state=unit']]],
+    ['首次启动', 'onboard.html', [['查找服务器', 'state=discover'], ['找到服务器', 'state=found'], ['手动输入', 'state=manual'], ['创建主账号', 'state=setup'], ['登录', 'state=login'], ['敏感信息同意', 'state=consent']]],
+  ];
+  document.getElementById('groups').innerHTML = groups.map(([title, file, states]) =>
+    `<section><p class="section-label">${title}</p><div class="list">${states.map(([name, q]) => `<a href="${q.endsWith('.html') ? q : `${file}?${q}`}">${name}<span>${file}</span></a>`).join('')}</div></section>`).join('');
+</script>
+  <p class="lead" style="margin-top:28px">数字字体 Outfit（SIL OFL，见 fonts/OFL.txt），图标 Phosphor Icons（MIT，见 PHOSPHOR-LICENSE.txt）。<a href="../" style="color:var(--ink)">返回主页</a></p>
+</body>
+</html>

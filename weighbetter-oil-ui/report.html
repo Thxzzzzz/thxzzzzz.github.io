@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>身体报告</title>
+<link rel="stylesheet" href="base.css">
+<script src="theme.js"></script>
+<style>
+  /* 长页：报告可滚动；弹层状态固定在一屏内 */
+  .phone { height: auto; min-height: 844px; padding-bottom: 40px; }
+  [data-state="explain"] .phone { height: 844px; padding-bottom: 0; }
+
+  .meta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 2px 24px 0; font-size: 13px; color: var(--ink-2); }
+  .meta-line .who { color: var(--ink); font-weight: 600; }
+  .meta-line .dot { opacity: .5; }
+  .meta-line a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--mute); margin-left: 4px; }
+  .notice { margin: 14px 16px 0; padding: 12px 16px; border-radius: var(--r-ctrl); background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--ink-2); }
+
+  /* 身体得分 + 身体年龄 */
+  .summary { margin: 16px 16px 0; padding: 22px 24px 20px; }
+  .score { display: flex; align-items: flex-end; justify-content: space-between; }
+  .score .v { font: 300 72px/0.9 var(--num); letter-spacing: -3px; }
+  .score .v small { font: 400 17px var(--num); letter-spacing: 0; color: var(--ink-2); margin-left: 4px; }
+  .score .side { text-align: right; font-size: 13px; color: var(--ink-2); padding-bottom: 6px; }
+  .score .side b { display: block; font: 500 17px var(--num); color: var(--ink); margin-bottom: 2px; }
+  .bar { position: relative; height: 4px; margin-top: 16px; border-radius: 2px; background: var(--mute); }
+  .bar i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--ink); }
+  .age { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .age .top { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--ink-2); }
+  .age .top b { font-weight: 600; color: var(--ink); font-size: 15px; }
+  .age svg { display: block; margin-top: 12px; }
+
+  /* 指标分组 */
+  .group { margin: 26px 16px 0; }
+  .metric { display: block; padding: 14px 16px 16px; color: inherit; text-decoration: none; }
+  .metric + .metric { border-top: 1px solid var(--line); }
+  .metric .line { display: flex; align-items: center; gap: 8px; }
+  .metric .n { flex: 1; font-size: 15px; }
+  .metric .mv { font: 400 19px var(--num); letter-spacing: -.2px; }
+  .metric .mv small { font: 400 13px var(--num); color: var(--ink-2); margin-left: 2px; }
+  .metric .mv em { font-style: normal; font: 400 13px var(--num); color: var(--ink-2); margin-left: 8px; }
+  .metric .lv { width: 34px; text-align: right; font-size: 13px; color: var(--ink-2); }
+  .metric .lv.off { color: var(--accent); font-weight: 600; }
+  .metric .more { color: var(--ink-2); opacity: .55; }
+  .metric .track { margin-top: 12px; }
+  .metric .track i.std { background: var(--hair-2); }
+  .metric .track i { background: var(--mute); }
+  .metric .track .pin { width: 12px; height: 12px; margin-left: -6px; top: -3px; box-shadow: 0 0 0 3px var(--paper); }
+  .metric .track .pin.off { background: var(--accent); }
+  .metric.plain { padding: 0 16px; min-height: 54px; display: flex; align-items: center; }
+  .metric.plain .line { width: 100%; }
+
+  /* 仅体重 */
+  .weight-hero { padding: 26px 28px 24px; margin: 16px 16px 0; }
+  .weight-hero .v { font: 300 96px/0.9 var(--num); letter-spacing: -4px; }
+  .weight-hero .u { font: 400 17px var(--num); color: var(--ink-2); margin-left: 6px; }
+  .weight-hero .bmi { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .missing { margin: 12px 16px 0; padding: 22px 22px 24px; text-align: center; }
+  .missing svg.art { display: block; margin: 0 auto 16px; }
+  .missing p { font-size: 14px; line-height: 1.7; color: var(--ink-2); }
+  .missing p b { display: block; color: var(--ink); font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .skipped { margin: 26px 16px 0; }
+  .skipped .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skipped .chips span { height: 30px; padding: 0 12px; border-radius: 15px; display: inline-flex; align-items: center; font-size: 13px; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--mute); }
+
+  /* 解释弹层 */
+  .sheet h3 { font-size: 20px; font-weight: 600; display: flex; align-items: baseline; justify-content: space-between; }
+  .sheet h3 .v { font: 400 24px var(--num); }
+  .sheet h3 .v small { font-size: 14px; color: var(--ink-2); margin-left: 2px; }
+  .sheet .lede { margin-top: 6px; font-size: 15px; line-height: 1.6; color: var(--ink-2); }
+  .sheet .track { margin-top: 28px; }
+  .sheet .track i { background: var(--mute); }
+  .sheet .track i.std { background: var(--hair-2); }
+  .sheet .names { display: grid; column-gap: 4px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+  .sheet .names span:nth-child(2) { color: var(--ink); font-weight: 600; }
+  .sheet dl { margin-top: 24px; display: grid; gap: 16px; }
+  .sheet dt { font-size: 13px; color: var(--ink-2); }
+  .sheet dd { margin-top: 4px; font-size: 15px; line-height: 1.6; }
+  .sheet .btn { margin-top: 22px; }
+</style>
+</head>
+<body>
+<main class="phone">
+  <div id="sb"></div>
+  <header class="nav"><span class="back"><i data-icon="caret-left" data-size="18"></i>今天</span><span class="title">身体报告</span><span></span></header>
+  <p class="meta-line" data-state="full no-range explain"><span class="who">我</span><span class="dot">·</span><span class="num">10 月 19 日 7:41</span><span class="dot">·</span><span>自动归属</span><a href="#">改归属</a></p>
+  <p class="meta-line" data-state="weight-only"><span class="who">我</span><span class="dot">·</span><span class="num">10 月 20 日 22:06</span><span class="dot">·</span><span>自动归属</span><a href="#">改归属</a></p>
+
+  <p class="notice" data-state="no-range"><i data-icon="info" data-size="18"></i>标准区间还在校准，先只显示数值</p>
+
+  <!-- 完整 / 无区间：得分与身体年龄 -->
+  <section class="card paper summary" data-state="full no-range explain">
+    <div class="score">
+      <div><p class="kicker">身体得分</p><span class="v">82<small>/ 100</small></span></div>
+      <div class="side"><b>+1</b>比上次</div>
+    </div>
+    <div class="bar"><i style="width:82%"></i></div>
+    <div class="age">
+      <div class="top"><span>身体年龄</span><span><b class="num">31</b> 岁，比实际年轻 3 岁</span></div>
+      <svg id="age" width="294" height="40" viewBox="0 0 294 40" aria-label="身体年龄 31 岁，实际年龄 34 岁"></svg>
+    </div>
+  </section>
+
+  <div id="groups" data-state="full explain"></div>
+  <div id="groups-plain" data-state="no-range"></div>
+
+  <!-- 仅体重 -->
+  <section class="card cream weight-hero" data-state="weight-only">
+    <p class="kicker">只记录了体重</p>
+    <div style="margin-top:14px"><span class="v">68.40</span><span class="u">kg</span></div>
+    <div class="bmi" id="bmi"></div>
+  </section>
+  <section class="card paper missing" data-state="weight-only">
+    <svg class="art" width="168" height="120" viewBox="0 0 168 120" aria-hidden="true">
+      <rect x="14" y="8" width="140" height="104" rx="22" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5"/>
+      <rect x="34" y="26" width="34" height="30" rx="10" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5"/>
+      <rect x="100" y="26" width="34" height="30" rx="10" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5"/>
+      <rect x="34" y="66" width="34" height="30" rx="10" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5"/>
+      <rect x="100" y="66" width="34" height="30" rx="10" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5"/>
+      <path d="M46 34c-6 6-7 22-3 34 3 9 10 12 15 8 5-5 4-20 1-30-3-10-8-16-13-12Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+      <path d="M122 34c6 6 7 22 3 34-3 9-10 12-15 8-5-5-4-20-1-30 3-10 8-16 13-12Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    </svg>
+    <p><b>这次没测到阻抗</b>只记录了体重。双脚踩稳电极、光脚上秤，<br>可以测到完整成分。</p>
+  </section>
+  <section class="skipped" data-state="weight-only">
+    <p class="section-label">这次没有的指标</p>
+    <div class="chips"><span>体脂率</span><span>脂肪量</span><span>去脂体重</span><span>肌肉量</span><span>骨骼肌</span><span>水分率</span><span>总水分</span><span>细胞内液</span><span>细胞外液</span><span>蛋白质</span><span>骨量</span><span>内脏脂肪</span><span>基础代谢</span><span>身体年龄</span><span>身体得分</span></div>
+  </section>
+
+  <!-- 解释弹层：细胞外液 -->
+  <div class="scrim" data-state="explain"></div>
+  <section class="sheet" data-state="explain" aria-label="细胞外液">
+    <div class="grip"></div>
+    <h3>细胞外液<span class="v">11.7<small>kg</small></span></h3>
+    <p class="lede">细胞外面的水，比如血液和组织间的液体。</p>
+    <div id="explain-track"></div>
+    <dl>
+      <div><dt>你的值</dt><dd>11.7 kg，在标准区间（11.0–14.0 kg）里，占总水分的 31%。</dd></div>
+      <div><dt>怎么看</dt><dd>一天里会随喝水、出汗和久坐上下浮动，单次高一点不用在意，连续几次都偏高再留意。</dd></div>
+    </dl>
+    <button class="btn line">知道了</button>
+  </section>
+</main>
+<script src="icons.js"></script>
+<script src="ui.js"></script>
+<script>
+  document.getElementById('sb').outerHTML = UI.statusbar();
+
+  // 本人：男 34 岁 175 cm；区间为示意，正式值以 M0 定稿的区间表为准（docs/05 A7）
+  const GROUPS = [
+    ['身体构成', [
+      { n: '体重', v: 68.25, u: 'kg', d: 2, min: 45, max: 90, b: [56.7, 73.5] },
+      { n: 'BMI', v: 22.3, u: '', min: 15, max: 32, b: [18.5, 24] },
+      { n: '体脂率', v: 18.6, u: '%', min: 5, max: 35, b: [11, 22] },
+      { n: '脂肪量', v: 12.7, u: 'kg', min: 0, max: 30, b: [7.5, 15] },
+      { n: '去脂体重', v: 55.6, u: 'kg', min: 40, max: 70, b: [49, 62] },
+      { n: '肌肉量', v: 52.1, u: 'kg', min: 40, max: 65, b: [49.4, 59.4] },
+      { n: '骨骼肌', v: 30.4, u: 'kg', min: 20, max: 40, b: [28, 34] },
+      { n: '蛋白质', v: 14.4, u: 'kg', extra: '21.1%', min: 8, max: 20, b: [11.2, 15.4] },
+      { n: '骨量', v: 2.9, u: 'kg', min: 1.5, max: 4.5, b: [2.7, 3.3] },
+    ]],
+    ['水分', [
+      { n: '水分率', v: 55.2, u: '%', min: 45, max: 70, b: [55, 65] },
+      { n: '总水分', v: 37.7, u: 'kg', min: 30, max: 50, b: [37, 44] },
+      { n: '细胞内液', v: 26.0, u: 'kg', min: 18, max: 34, b: [23, 28.5] },
+      { n: '细胞外液', v: 11.7, u: 'kg', min: 8, max: 17, b: [11, 14] },
+    ]],
+    ['代谢与风险', [
+      { n: '内脏脂肪', v: 11, u: '级', d: 0, min: 1, max: 20, b: [1, 9.5], labels: ['标准', '偏高'], std: 0 },
+      { n: '基础代谢', v: 1586, u: 'kcal', d: 0, min: 1200, max: 2000, b: [1550], labels: ['偏低', '标准'], std: 1 },
+    ]],
+  ];
+  const fmt = m => m.v.toFixed(m.d ?? 1);
+  const pct = (m, x) => (x - m.min) / (m.max - m.min) * 100;
+
+  // 分段：b 给出分界；三段默认是 偏低 / 标准 / 偏高
+  function segments(m) {
+    const edges = m.b.length === 2 && m.b[0] === m.min ? [m.min, m.b[1], m.max] : [m.min, ...m.b, m.max];
+    const labels = m.labels ?? ['偏低', '标准', '偏高'];
+    const std = m.std ?? 1;
+    return edges.slice(1).map((e, i) => ({ from: edges[i], to: e, label: labels[i], std: i === std }));
+  }
+  function level(m) {
+    const s = segments(m).find(s => m.v >= s.from && m.v < s.to) ?? segments(m).at(-1);
+    return s;
+  }
+  function track(m) {
+    const segs = segments(m), lv = level(m);
+    return `<div class="track">${segs.map(s => `<i class="${s.std ? 'std' : ''}" style="flex:${s.to - s.from}"></i>`).join('')}
+      <span class="pin ${lv.std ? '' : 'off'}" style="left:${pct(m, m.v)}%"></span></div>`;
+  }
+  const value = m => `<span class="mv">${fmt(m)}${m.u ? `<small>${m.u}</small>` : ''}${m.extra ? `<em>${m.extra}</em>` : ''}</span>`;
+  const more = UI.icon('caret-right', 14);
+
+  document.getElementById('groups').innerHTML = GROUPS.map(([g, ms]) => `
+    <section class="group"><p class="section-label">${g}</p><div class="list">
+      ${ms.map(m => { const lv = level(m); return `<a class="metric" href="#"><div class="line"><span class="n">${m.n}</span>${value(m)}<span class="lv ${lv.std ? '' : 'off'}">${lv.label}</span><span class="more">${more}</span></div>${track(m)}</a>`; }).join('')}
+    </div></section>`).join('');
+  document.getElementById('groups-plain').innerHTML = GROUPS.map(([g, ms]) => `
+    <section class="group"><p class="section-label">${g}</p><div class="list">
+      ${ms.map(m => `<a class="metric plain" href="#"><div class="line"><span class="n">${m.n}</span>${value(m)}<span class="more" style="margin-left:8px">${more}</span></div></a>`).join('')}
+    </div></section>`).join('');
+
+  // 仅体重：BMI 一行（68.40 kg / 175 cm）
+  { const m = { n: 'BMI', v: 22.3, u: '', min: 15, max: 32, b: [18.5, 24] }, lv = level(m);
+    document.getElementById('bmi').innerHTML = `<div class="metric" style="padding:0"><div class="line"><span class="n">BMI</span>${value(m)}<span class="lv">${lv.label}</span></div>${track(m)}</div>`; }
+
+  // 解释弹层里的区间尺
+  { const m = GROUPS[1][1][3], segs = segments(m);
+    document.getElementById('explain-track').innerHTML = track(m) +
+      `<div class="names" style="grid-template-columns:${segs.map(s => `${s.to - s.from}fr`).join(' ')}">${segs.map(s => `<span>${s.label}</span>`).join('')}</div>`; }
+
+  // 身体年龄轴：20–50 岁
+  { const x = a => 8 + (a - 20) / 30 * 278, ink = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+    document.getElementById('age').innerHTML = `
+      <line x1="8" x2="286" y1="10" y2="10" stroke="${ink}" stroke-opacity=".1" stroke-width="4" stroke-linecap="round"/>
+      <line x1="${x(31)}" x2="${x(34)}" y1="10" y2="10" stroke="${ink}" stroke-opacity=".35" stroke-width="4"/>
+      <circle cx="${x(34)}" cy="10" r="6" fill="#fff" stroke="${ink}" stroke-opacity=".45" stroke-width="1.5"/>
+      <circle cx="${x(31)}" cy="10" r="6.5" fill="${ink}" stroke="#fff" stroke-width="2"/>
+      ${[20, 30, 40, 50].map(a => `<text x="${x(a)}" y="34" text-anchor="${a === 20 ? 'start' : a === 50 ? 'end' : 'middle'}" font-size="12" fill="${THEME.v('--ink-2')}" font-family="Outfit, -apple-system">${a}</text>`).join('')}
+      <text x="${x(34) + 10}" y="14" font-size="12" fill="${THEME.v('--ink-2')}" font-family="-apple-system">实际 34</text>`;
+  }
+
+  UI.hydrate();
+  UI.states('full');
+</script>
+</body>
+</html>
