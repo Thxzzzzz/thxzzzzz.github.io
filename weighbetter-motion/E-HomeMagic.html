@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A 用在概览 · 体重主卡到测量记录</title>
+<link rel="stylesheet" href="tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&amp;family=Noto+Sans+SC:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+</style>
+</head>
+<body>
+<div style="width: 402px; height: 874px; box-sizing: border-box; position: relative; overflow: hidden; background: var(--wb-bg); color: var(--wb-text); font-family: var(--wb-font); font-size: var(--wb-fs-100); line-height: 1.5">
+
+<div data-dc-style="st.list">
+<header style="padding: 69px 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px"><h1 style="margin: 0; font-family: var(--wb-font-head); font-size: var(--wb-fs-700); font-weight: var(--wb-head-weight); line-height: 1.2; color: var(--wb-title)">概览</h1><div aria-hidden="true" style="display: flex; gap: 8px"><span style="width: 44px; height: 44px; border-radius: var(--wb-r-full); background: var(--wb-layer-1); color: var(--wb-title); display: inline-flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 10a4 4 0 0 1 6 0"/></svg></span><span style="height: 44px; padding: 0 10px 0 4px; border-radius: var(--wb-r-full); background: var(--wb-layer-1); display: inline-flex; align-items: center; gap: 8px; font-size: var(--wb-fs-75); font-weight: 700; color: var(--wb-title)"><span style="width: 36px; height: 36px; border-radius: var(--wb-r-full); background: var(--wb-accent-shape); display: inline-flex; align-items: center; justify-content: center; color: var(--wb-accent-strong)">我</span>我<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--wb-text-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5l6 6 6-6"/></svg></span></div></header>
+<main style="padding: 0 16px">
+<div style="height: 14px"></div>
+<button type="button" data-dc-onClick="openIt" aria-label="体重，查看测量记录" style="display: block; width: 100%; height: 285.9px; padding: 0; border: none; border-radius: var(--wb-r-xl); background: transparent; cursor: pointer"></button>
+<div style="height: 12px"></div>
+<div style="height: 52px; padding: 0 5px 0 18px; box-sizing: border-box; border: 2px solid var(--wb-border); border-radius: var(--wb-r-pill); display: flex; align-items: center; justify-content: space-between; color: var(--wb-title); font-weight: 600">1 条新读数待认领<span style="height: 38px; padding: 0 16px; border-radius: var(--wb-r-pill); background: var(--wb-accent); color: var(--wb-on-accent); display: inline-flex; align-items: center; font-weight: 800">认领</span></div>
+<div style="height: 12px"></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="padding: 16px; border-radius: var(--wb-r-xl); background: var(--wb-layer-1)"><div style="display: flex; align-items: center; gap: 8px; font-size: var(--wb-fs-75); font-weight: 600; color: var(--wb-text-2)"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--wb-metric-fat)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>体脂率</div><div style="margin-top: 6px"><span style="font-size: 36px; font-weight: var(--wb-num-weight); line-height: 1.05; color: var(--wb-title)">18.6</span><span style="margin-left: 4px; font-size: 17px; font-weight: 600; color: var(--wb-text-2)">%</span></div><div style="margin-top: 4px; font-size: var(--wb-fs-75); font-weight: 700; color: var(--wb-positive-on-subtle)">标准</div></div>
+<div style="padding: 16px; border-radius: var(--wb-r-xl); background: var(--wb-layer-1)"><div style="display: flex; align-items: center; gap: 8px; font-size: var(--wb-fs-75); font-weight: 600; color: var(--wb-text-2)"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--wb-metric-muscle)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.5" r="3"/><path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>肌肉量</div><div style="margin-top: 6px"><span style="font-size: 36px; font-weight: var(--wb-num-weight); line-height: 1.05; color: var(--wb-title)">52.1</span><span style="margin-left: 4px; font-size: 17px; font-weight: 600; color: var(--wb-text-2)">kg</span></div><div style="margin-top: 4px; font-size: var(--wb-fs-75); font-weight: 700; color: var(--wb-positive-on-subtle)">标准</div></div>
+</div>
+</main>
+<nav aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 104px; padding: 8px 8px 42px; box-sizing: border-box; background: var(--wb-tab-bg); border-top: var(--wb-tab-border); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))"><span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: var(--wb-fs-25); font-weight: 700; color: var(--wb-tab-active)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.5-7.5-10a4.2 4.2 0 0 1 7.5-2.6 4.2 4.2 0 0 1 7.5 2.6c0 5.5-7.5 10-7.5 10z"/></svg>概览</span><span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: var(--wb-fs-25); font-weight: 700; color: var(--wb-tab-ink)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l5-5 3 3 8-8"/></svg>趋势</span><span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: var(--wb-fs-25); font-weight: 700; color: var(--wb-tab-ink)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="13" rx="4"/></svg>设备</span><span style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: var(--wb-fs-25); font-weight: 700; color: var(--wb-tab-ink)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>设置</span></nav>
+</div>
+
+<div aria-hidden="true" data-dc-style="st.bg"></div>
+
+<div aria-hidden="true" data-dc-style="st.extras">
+<svg width="150" height="150" viewBox="0 0 150 150" style="position: absolute; left: 266px; top: 89.8px"><circle cx="78" cy="72" r="54" fill="var(--wb-accent-shape)"/><path d="M78 36 L118 104 H38 Z" fill="var(--wb-accent)" fill-opacity="0.18"/></svg>
+<div style="position: absolute; left: 36px; top: 143.8px; font-size: var(--wb-fs-75); font-weight: 700; color: var(--wb-text-2); white-space: nowrap">体重 · 今天 7:41</div>
+<span style="position: absolute; left: 36px; top: 249.8px; height: 30px; padding: 0 12px; display: inline-flex; align-items: center; border-radius: var(--wb-r-pill); background: var(--wb-delta-bg); color: var(--wb-delta-ink); font-size: var(--wb-fs-75); font-weight: 800; white-space: nowrap">↓ 0.15 比上次</span>
+<svg width="330" height="98" viewBox="0 0 310 92" style="position: absolute; left: 36px; top: 291.8px"><path d="M0 84.0H310" stroke="var(--wb-text-3)" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><polyline points="6.0,10.7 16.3,10.1 26.6,10.3 36.8,10.0 47.1,10.0 57.4,12.0 67.7,14.0 77.9,13.3 88.2,14.8 98.5,16.2 108.8,15.4 119.0,16.6 129.3,16.6 139.6,18.0 149.9,19.0 160.1,21.4 170.4,22.1 180.7,22.3 191.0,23.7 201.2,24.5 211.5,25.5 221.8,28.5 232.1,29.0 242.3,30.1 252.6,32.2 262.9,34.9 273.2,34.9 283.4,36.2 293.7,36.8 304.0,38.2" fill="none" stroke="var(--wb-accent-visual)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="304.0" cy="38.2" r="7" fill="#ffffff" stroke="var(--wb-accent-visual)" stroke-width="4"/></svg>
+</div>
+
+<div data-dc-style="st.detail">
+<header style="padding: 62px 8px 0; height: 110px; box-sizing: border-box; display: grid; grid-template-columns: 96px 1fr 96px; align-items: center"><button type="button" data-dc-onClick="closeIt" aria-label="返回" style="width: 44px; height: 44px; padding: 0; border: none; border-radius: var(--wb-r-full); background: transparent; display: flex; align-items: center; justify-content: center; color: var(--wb-title); cursor: pointer"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6l-6 6 6 6"/></svg></button><div style="text-align: center; font-size: var(--wb-fs-100); font-weight: var(--wb-head-weight); color: var(--wb-title); white-space: nowrap">测量记录</div><div style="display: flex; justify-content: flex-end"><span aria-hidden="true" style="height: 44px; padding: 0 10px 0 4px; border-radius: var(--wb-r-full); background: var(--wb-layer-1); display: inline-flex; align-items: center; gap: 8px; font-size: var(--wb-fs-75); font-weight: 700; color: var(--wb-title)"><span style="width: 36px; height: 36px; border-radius: var(--wb-r-full); background: var(--wb-accent-shape); display: inline-flex; align-items: center; justify-content: center; color: var(--wb-accent-strong)">我</span>我<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--wb-text-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5l6 6 6-6"/></svg></span></div></header>
+<main style="padding: 0 16px">
+<p style="margin: 0; font-size: var(--wb-fs-50); color: var(--wb-text-3); line-height: 1.55">下拉刷新 · 左滑一条记录可以改归属或删除。</p>
+<div style="margin: 20px 0 8px; font-size: var(--wb-fs-75); font-weight: 800; color: var(--wb-text-2)">今天</div>
+<div style="min-height: 64px; padding: 8px 16px; box-sizing: border-box; display: flex; align-items: center; gap: 12px"><div style="flex: 1; min-width: 0"><div style="font-size: var(--wb-fs-100); font-weight: 600; line-height: 1.35; visibility: hidden">68.25 kg</div><div style="font-size: var(--wb-fs-50); color: var(--wb-text-3); line-height: 1.3">07:38–07:41 · BMI 24.2 · 体脂 18.6%</div></div><span style="display: inline-flex; align-items: center; gap: 2px; color: var(--wb-accent-on-subtle); font-size: var(--wb-fs-75); font-weight: 700; line-height: 1; white-space: nowrap">复称 3 次<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5l6 6 6-6"/></svg></span></div>
+<div style="margin: 20px 0 8px; font-size: var(--wb-fs-75); font-weight: 800; color: var(--wb-text-2)">昨天</div>
+<div style="border-radius: var(--wb-r-xl); background: var(--wb-layer-1); overflow: hidden">
+<div style="min-height: 64px; padding: 8px 16px; box-sizing: border-box; display: flex; align-items: center; gap: 12px"><div style="flex: 1; min-width: 0"><div style="font-size: var(--wb-fs-100); font-weight: 600; color: var(--wb-title); line-height: 1.35"><span style="font-weight: var(--wb-num-weight)">68.40</span> <span style="font-size: var(--wb-fs-75); color: var(--wb-text-2)">kg</span></div><div style="font-size: var(--wb-fs-50); color: var(--wb-text-3); line-height: 1.3">21:05 · BMI 24.2 · 没测到体成分</div></div><span style="color: var(--wb-text-3); font-size: var(--wb-fs-50); white-space: nowrap">仅体重</span><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--wb-text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M9.5 6l6 6-6 6"/></svg></div>
+<div style="min-height: 64px; padding: 8px 16px; box-sizing: border-box; border-top: 1px solid var(--wb-divider); display: flex; align-items: center; gap: 12px"><div style="flex: 1; min-width: 0"><div style="font-size: var(--wb-fs-100); font-weight: 600; color: var(--wb-title); line-height: 1.35"><span style="font-weight: var(--wb-num-weight)">68.40</span> <span style="font-size: var(--wb-fs-75); color: var(--wb-text-2)">kg</span></div><div style="font-size: var(--wb-fs-50); color: var(--wb-text-3); line-height: 1.3">07:35 · BMI 24.2 · 体脂 18.7%</div></div><span style="color: var(--wb-text-3); font-size: var(--wb-fs-50); white-space: nowrap">自动</span><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--wb-text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M9.5 6l6 6-6 6"/></svg></div>
+</div>
+<div style="margin: 20px 0 8px; font-size: var(--wb-fs-75); font-weight: 800; color: var(--wb-text-2)">10 月 17 日 周六</div>
+<div style="border-radius: var(--wb-r-xl); background: var(--wb-layer-1); overflow: hidden">
+<div style="min-height: 64px; padding: 8px 16px; box-sizing: border-box; display: flex; align-items: center; gap: 12px"><div style="flex: 1; min-width: 0"><div style="font-size: var(--wb-fs-100); font-weight: 600; color: var(--wb-title); line-height: 1.35"><span style="font-weight: var(--wb-num-weight)">68.54</span> <span style="font-size: var(--wb-fs-75); color: var(--wb-text-2)">kg</span></div><div style="font-size: var(--wb-fs-50); color: var(--wb-text-3); line-height: 1.3">07:42 · BMI 24.3 · 体脂 18.8%</div></div><span style="color: var(--wb-text-3); font-size: var(--wb-fs-50); white-space: nowrap">自动</span><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--wb-text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M9.5 6l6 6-6 6"/></svg></div>
+</div>
+</main>
+</div>
+
+<div data-dc-style="st.num">68.25</div>
+<div data-dc-style="st.unit">kg</div>
+</div>
+<script>
+class DCLogic {
+  constructor(props) { this.props = props; this.state = {}; }
+  setState(patch) {
+    const next = typeof patch === "function" ? patch(this.state, this.props) : patch;
+    this.state = { ...this.state, ...next };
+    window.dcRender();
+  }
+  forceUpdate() { window.dcRender(); }
+}
+</script>
+<script>
+class Component extends DCLogic {
+  static EASE = 'cubic-bezier(0.2, 0, 0, 1)';
+  // 主卡一侧与记录一侧的位置（按 Spectrum 2 画板 Main / C1 的排版算出）。
+  static HOME = {
+    bg: { x: 16, y: 123.8, w: 370, h: 285.9, r: 20 },
+    num: { x: 36, y: 168.3, s: 1 },
+    unit: { x: 203, y: 205, s: 1 },
+  };
+  static RECORD = {
+    bg: { x: 16, y: 180.65, w: 370, h: 64, r: 20 },
+    num: { x: 32, y: 195.3, s: 17 / 70 },
+    unit: { x: 75.5, y: 192.9, s: 15 / 22 },
+  };
+  componentDidMount() { this.timers = []; this.schedule(false); }
+  componentWillUnmount() { this.clear(); }
+  componentDidUpdate(prev) {
+    if (prev.autoplay !== this.props.autoplay || prev.speed !== this.props.speed) {
+      this.clear();
+      this.schedule(this.isOpen());
+    }
+  }
+  isOpen() { return !!(this.state && this.state.open); }
+  clear() { (this.timers || []).forEach(clearTimeout); this.timers = []; }
+  dur() {
+    const s = this.props.speed ?? '1x';
+    return Math.round(500 / (s === '0.25x' ? 0.25 : s === '0.5x' ? 0.5 : 1));
+  }
+  // 自动循环：停在概览 1.2 秒 → 打开 → 停在测量记录 1.6 秒 → 返回。
+  schedule(open) {
+    if (this.props.autoplay === false) return;
+    const wait = this.dur() + (open ? 1600 : 1200);
+    this.timers.push(setTimeout(() => { this.setState({ open: !open }); this.schedule(!open); }, wait));
+  }
+  go(open) { this.clear(); this.setState({ open }); this.schedule(open); }
+  renderVals() {
+    const EASE = Component.EASE;
+    const move = (p) => `transform: translate(${p.x}px, ${p.y}px) scale(${p.s});`;
+    const box = (r) => `left: ${r.x}px; top: ${r.y}px; width: ${r.w}px; height: ${r.h}px; border-radius: ${r.r}px;`;
+    const fade = (ms, delay) => `opacity ${ms}ms linear ${delay}ms`;
+    const open = this.isOpen();
+    const d = this.dur();
+    const at = open ? Component.RECORD : Component.HOME;
+    const shared = (extra) => `position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; white-space: nowrap; transition: transform ${d}ms ${EASE}; ${extra}`;
+    return {
+      openIt: () => this.go(true),
+      closeIt: () => this.go(false),
+      st: {
+        list: `position: absolute; inset: 0; opacity: ${open ? 0 : 1}; pointer-events: ${open ? 'none' : 'auto'}; transition: ${open ? fade(d * 0.45, 0) : fade(d * 0.6, d * 0.35)};`,
+        // 主卡的底板收成第一条记录的底板，颜色从主卡蓝渐变到卡片灰。
+        bg: `position: absolute; pointer-events: none; background: ${open ? 'var(--wb-layer-1)' : 'var(--wb-hero-bg)'}; ${box(at.bg)} transition: left ${d}ms ${EASE}, top ${d}ms ${EASE}, width ${d}ms ${EASE}, height ${d}ms ${EASE}, background-color ${d}ms ${EASE};`,
+        // 主卡上对不上的内容（时间、比上次、走势）打开时先淡出，返回快到时再淡入。
+        extras: `position: absolute; inset: 0; pointer-events: none; overflow: hidden; clip-path: inset(123.8px 16px 464.3px 16px round 20px); opacity: ${open ? 0 : 1}; transition: ${open ? fade(d * 0.3, 0) : fade(d * 0.35, d * 0.65)};`,
+        detail: `position: absolute; inset: 0; opacity: ${open ? 1 : 0}; transform: translateY(${open ? 0 : 12}px); pointer-events: ${open ? 'auto' : 'none'}; transition: ${open ? `${fade(d * 0.6, d * 0.35)}, transform ${d * 0.6}ms ${EASE} ${d * 0.35}ms` : `${fade(d * 0.4, 0)}, transform ${d * 0.4}ms ${EASE} 0ms`};`,
+        // 体重数字和单位从主卡缩小、飞进第一条记录；返回时原路放大回去。
+        num: shared(`${move(at.num)} font-size: 70px; font-weight: var(--wb-num-weight); letter-spacing: -1px; line-height: 1.05; color: var(--wb-title); font-variant-numeric: tabular-nums;`),
+        unit: shared(`${move(at.unit)} font-size: 22px; font-weight: 600; line-height: 1.5; color: var(--wb-text-2);`),
+      },
+    };
+  }
+}
+</script>
+<script>
+(() => {
+  const defaults = {"speed": "1x", "autoplay": true};
+  const query = new URLSearchParams(location.search);
+  const props = {};
+  for (const [k, v] of Object.entries(defaults)) {
+    if (!query.has(k)) { props[k] = v; continue; }
+    const q = query.get(k);
+    props[k] = typeof v === "boolean" ? !["false", "0"].includes(q) : typeof v === "number" ? Number(q) : q;
+  }
+  const c = new Component(props);
+  const get = (o, path) => path.split(".").reduce((v, k) => (v == null ? v : v[k]), o);
+  const bound = [...document.querySelectorAll("*")].filter((el) => el.getAttributeNames().some((n) => n.startsWith("data-dc-")));
+  window.dcRender = () => {
+    const vals = c.renderVals();
+    for (const el of bound) {
+      for (const n of el.getAttributeNames()) {
+        if (!n.startsWith("data-dc-")) continue;
+        const attr = n.slice(8), v = get(vals, el.getAttribute(n));
+        if (attr.startsWith("on")) el[attr] = v || null;
+        else if (attr === "style") el.style.cssText = v ?? "";
+        else if (v == null || v === false) el.removeAttribute(attr);
+        else el.setAttribute(attr, v);
+      }
+    }
+  };
+  window.dcRender();
+  if (c.componentDidMount) c.componentDidMount();
+})();
+</script></body>
+</html>

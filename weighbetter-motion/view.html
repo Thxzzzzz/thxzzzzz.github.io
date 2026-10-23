@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WeighBetter · 转场动效候选 · 交互预览</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;height:100vh;display:flex;background:#E4E4E0;color:#1C1C1C;font-family:-apple-system,"PingFang SC","Noto Sans SC",sans-serif}
+aside{width:300px;flex:none;overflow:auto;background:#FFFFFF;border-right:1px solid #D9D9D4;padding:16px 0}
+aside h1{margin:0 16px 4px;font-size:17px} aside p{margin:0 16px 12px;font-size:12px;color:#77776F}
+aside h2{margin:18px 16px 6px;font-size:13px;color:#77776F;font-weight:600}
+aside a{display:block;padding:9px 16px;font-size:15px;color:#1C1C1C;text-decoration:none}
+aside a:hover{background:#F2F2EF} aside a.on{background:#1C1C1C;color:#FFFFFF}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-width:0}
+.bar{display:flex;align-items:center;gap:12px;font-size:15px}
+.bar button{height:40px;padding:0 16px;border:1px solid #C9C9C4;border-radius:20px;background:#FFFFFF;font:inherit;cursor:pointer}
+.bar span{min-width:220px;text-align:center;font-weight:600}
+.phone{width:390px;height:844px;border-radius:44px;overflow:hidden;background:#FFFFFF;box-shadow:0 0 0 10px #1C1C1C,0 20px 60px rgba(0,0,0,.25);transform-origin:center}
+.phone iframe{width:390px;height:844px;border:0;display:block}
+.hint{font-size:12px;color:#77776F}
+.mobile-only{display:none}
+@media (max-width: 720px) {
+  body{display:block;height:auto;background:#FFFFFF}
+  aside{display:none;position:fixed;inset:0;z-index:20;width:auto;border:0;padding:12px 0 40px}
+  aside.open{display:block}
+  aside a{padding:13px 16px;font-size:16px}
+  .mobile-only{display:inline-flex;align-items:center;justify-content:center}
+  .bar button{display:inline-flex;align-items:center;justify-content:center}
+  main{display:block}
+  .bar{position:sticky;top:0;z-index:10;gap:6px;padding:8px 10px;background:rgba(255,255,255,.96);border-bottom:1px solid #E4E4E0}
+  .bar button{height:40px;padding:0 12px;flex:none}
+  .bar span{flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .label{display:none}
+  .stage{overflow:hidden}
+  .phone{border-radius:0;box-shadow:none;transform-origin:top left}
+  .hint{padding:14px 12px 28px;text-align:center;font-size:13px}
+}
+</style>
+</head>
+<body>
+<aside id="nav"><button id="close" class="mobile-only" style="margin:0 16px 8px;height:40px;padding:0 16px;border:1px solid #C9C9C4;border-radius:20px;background:#FFFFFF;font:inherit;font-size:15px">关闭目录</button><h1>WeighBetter · 转场动效候选</h1><p>点选切换；页面内按钮可点击；← → 键或左右滑动翻页</p></aside>
+<main>
+  <div class="bar"><button id="menu" class="mobile-only">目录</button><button id="prev">←<span class="label"> 上一张</span></button><span id="name"></span><button id="next"><span class="label">下一张 </span>→</button></div>
+  <div class="stage" id="stage"><div class="phone" id="phone"><iframe id="frame" title="设计稿"></iframe></div></div>
+  <div class="hint"><a id="open" href="#" target="_blank">单独打开</a> · <a href="index.html">平铺总览</a> · <a href="../index.html">返回首页</a></div>
+</main>
+<script>
+const groups = [{"group": "转场候选：自动循环「打开 → 停留 → 返回」，也可以点卡片打开、点返回关闭；Tweaks 里可以慢放", "boards": [{"title": "A · 神奇移动：元素各自飞到对应位置", "page": "Main.html"}, {"title": "B · 卡片展开成页 + 元素飞行", "page": "B-Container.html"}, {"title": "C · 整页从卡片缩放（iOS 缩放转场）", "page": "C-Zoom.html"}, {"title": "D · 现在 beta.9 的做法（对照）", "page": "D-Current.html"}, {"title": "A 用在概览：体重主卡 → 测量记录", "page": "E-HomeMagic.html"}]}];
+const flat = groups.flatMap(g => g.boards.map(b => ({...b, group: g.group})));
+const nav = document.getElementById("nav"), frame = document.getElementById("frame");
+const links = {};
+for (const g of groups) {
+  const h = document.createElement("h2"); h.textContent = g.group; nav.appendChild(h);
+  for (const b of g.boards) {
+    const a = document.createElement("a"); a.href = "#" + b.page; a.textContent = b.title;
+    a.addEventListener("click", () => nav.classList.remove("open"));
+    nav.appendChild(a); links[b.page] = a;
+  }
+}
+function current() { return decodeURIComponent(location.hash.slice(1)) || flat[0].page; }
+function show(page, fromFrame) {
+  const i = flat.findIndex(b => b.page === page);
+  const b = flat[i < 0 ? 0 : i];
+  document.getElementById("name").textContent = mobile.matches ? b.title : b.group + " · " + b.title;
+  document.getElementById("open").href = b.page;
+  for (const [p, a] of Object.entries(links)) a.classList.toggle("on", p === b.page);
+  links[b.page]?.scrollIntoView({block: "nearest"});
+  if (!fromFrame && !frame.src.endsWith("/" + b.page)) frame.src = b.page;
+}
+function step(d) {
+  const i = flat.findIndex(b => b.page === current());
+  location.hash = flat[(i + d + flat.length) % flat.length].page;
+}
+window.addEventListener("hashchange", () => show(current()));
+document.getElementById("prev").onclick = () => step(-1);
+document.getElementById("next").onclick = () => step(1);
+document.getElementById("menu").onclick = () => { nav.classList.add("open"); links[current()]?.scrollIntoView({block: "center"}); };
+document.getElementById("close").onclick = () => nav.classList.remove("open");
+const keys = e => { if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); };
+document.addEventListener("keydown", keys);
+function swipe(target) {
+  let x0 = 0, y0 = 0;
+  target.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, {passive: true});
+  target.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 50) step(dx < 0 ? 1 : -1);
+  }, {passive: true});
+}
+frame.addEventListener("load", () => {
+  const page = frame.contentWindow.location.pathname.split("/").pop();
+  if (page && page !== current()) { history.replaceState(null, "", "#" + page); show(page, true); }
+  frame.contentDocument.addEventListener("keydown", keys);
+  swipe(frame.contentDocument);
+});
+const mobile = window.matchMedia("(max-width: 720px)");
+function fit() {
+  const phone = document.getElementById("phone"), stage = document.getElementById("stage");
+  if (mobile.matches) {
+    const s = window.innerWidth / 390;
+    phone.style.transform = "scale(" + s + ")";
+    stage.style.height = Math.ceil(844 * s) + "px";
+  } else {
+    const s = Math.min(1, (window.innerHeight - 120) / 864, (window.innerWidth - 340) / 410);
+    phone.style.transform = "scale(" + s + ")";
+    stage.style.height = "";
+  }
+}
+mobile.addEventListener("change", fit);
+window.addEventListener("resize", fit); fit(); show(current());
+</script>
+</body>
+</html>

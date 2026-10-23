@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WeighBetter · 转场动效候选</title>
+<style>
+body{margin:0;background:#E9EAE6;font-family:"Noto Sans SC",sans-serif;color:#1C2024}
+header{position:sticky;top:0;z-index:1;display:flex;gap:16px;align-items:center;padding:12px 24px;background:#FFFFFF;border-bottom:1px solid #D9DBD5}
+header h1{margin:0;font-size:16px}
+header label{font-size:13px;display:flex;gap:8px;align-items:center}
+#board{position:relative;margin:48px;transform-origin:0 0}
+#board h2{position:absolute;margin:0;font-size:72px;line-height:1;white-space:nowrap}
+#board .label{position:absolute;font-size:20px;color:#3F454A;text-decoration:none}
+#board iframe{position:absolute;border:0;background:#FFFFFF;box-shadow:0 0 0 1px #D9DBD5}
+</style>
+</head>
+<body>
+<header><h1>WeighBetter · 转场动效候选</h1>
+<label>缩放 <input id="zoom" type="range" min="0.2" max="1" step="0.05" value="0.5"></label></header>
+<div id="board" style="width:2330px;height:1434px">
+<h2 style="left:0px;top:0px">转场候选：自动循环「打开 → 停留 → 返回」，也可以点卡片打开、点返回关闭；Tweaks 里可以慢放</h2>
+<a class="label" href="Main.html" style="left:0px;top:264px">A · 神奇移动：元素各自飞到对应位置</a><iframe src="Main.html" title="A · 神奇移动：元素各自飞到对应位置" style="left:0px;top:300px;width:402px;height:874px"></iframe>
+<a class="label" href="B-Container.html" style="left:482px;top:264px">B · 卡片展开成页 + 元素飞行</a><iframe src="B-Container.html" title="B · 卡片展开成页 + 元素飞行" style="left:482px;top:300px;width:402px;height:874px"></iframe>
+<a class="label" href="C-Zoom.html" style="left:964px;top:264px">C · 整页从卡片缩放（iOS 缩放转场）</a><iframe src="C-Zoom.html" title="C · 整页从卡片缩放（iOS 缩放转场）" style="left:964px;top:300px;width:402px;height:874px"></iframe>
+<a class="label" href="D-Current.html" style="left:1446px;top:264px">D · 现在 beta.9 的做法（对照）</a><iframe src="D-Current.html" title="D · 现在 beta.9 的做法（对照）" style="left:1446px;top:300px;width:402px;height:874px"></iframe>
+<a class="label" href="E-HomeMagic.html" style="left:1928px;top:264px">A 用在概览：体重主卡 → 测量记录</a><iframe src="E-HomeMagic.html" title="A 用在概览：体重主卡 → 测量记录" style="left:1928px;top:300px;width:402px;height:874px"></iframe>
+</div>
+<script>
+const board = document.getElementById("board");
+const zoom = document.getElementById("zoom");
+const apply = () => { board.style.transform = "scale(" + zoom.value + ")"; };
+zoom.addEventListener("input", apply);
+apply();
+</script>
+</body>
+</html>

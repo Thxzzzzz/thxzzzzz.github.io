@@ -1,0 +1,214 @@
+/*
+ * WeighBetter 主题层：所有画板只引用这里的 --wb-* 语义变量，不写死色值。
+ * 默认主题 = Adobe Spectrum 2 浅色、移动端尺寸档。取值出处：adobe/spectrum-design-data
+ * packages/tokens/src（color-palette、color-aliases、layout、typography），括号里是原 token 名。
+ * 以后加主题：新增 [data-theme="<键>"] { … } 覆盖同一组变量即可，变量名与含义不变（见 ../../../Spectrum2-设计规范.md §4）。
+ * 深色模式：文件末尾的 [data-mode="dark"] 只覆盖颜色与投影，取 Spectrum 2 的 dark 色值；画板在根节点上加 data-mode="dark" 即切换。
+ */
+:root {
+  /* 表面 */
+  --wb-bg: #ffffff;                 /* background-base (gray-25) */
+  --wb-layer-1: #f8f8f8;            /* background-layer-1 (gray-50)：卡片、分组列表 */
+  --wb-layer-2: #f3f3f3;            /* gray-75：卡片里的内嵌块、按下态 */
+  --wb-elevated: #ffffff;           /* background-elevated：底部弹层、对话框 */
+  --wb-fill: #e9e9e9;               /* neutral-subtle-background (gray-100)：禁用开关的轨道 */
+  --wb-scrim: rgba(0, 0, 0, 0.4);   /* overlay：弹层背后的遮罩 */
+  --wb-divider: #e9e9e9;            /* gray-100 */
+  --wb-border: #e1e1e1;             /* gray-200 */
+  --wb-border-strong: #c6c6c6;      /* gray-400：输入框、次要按钮描边 */
+
+  /* 文字 */
+  --wb-title: #131313;              /* title-color (gray-900)：标题与大数字 */
+  --wb-text: #292929;               /* neutral-content (gray-800)：正文 */
+  --wb-text-2: #505050;             /* neutral-subdued-content (gray-700)：说明 */
+  --wb-text-3: #717171;             /* gray-600：时间戳、坐标（对白底 4.8:1） */
+  --wb-disabled: #c6c6c6;           /* disabled-content (gray-400) */
+
+  /* 强调色（informative 与 accent 同为蓝） */
+  --wb-accent: #3b63fb;             /* accent-background / accent-content (blue-900) */
+  --wb-accent-strong: #274dea;      /* blue-1000：按下态、强调色小字 */
+  --wb-accent-visual: #4b75ff;      /* accent-visual (blue-800)：走势线、图形 */
+  --wb-accent-subtle: #e5f0fe;      /* accent-subtle-background (blue-200)：主卡底、选中态 */
+  --wb-accent-faint: #f5f9ff;       /* blue-100 */
+  --wb-accent-shape: #cbe2fe;       /* blue-300：主卡里的装饰几何形 */
+  --wb-on-accent: #ffffff;
+  --wb-focus: #4b75ff;              /* focus-indicator (blue-800)，2px */
+
+  /* 语义色：只表达状态，配文字使用 */
+  --wb-positive: #05834e;           /* positive (green-900)：标准、成功 */
+  --wb-positive-subtle: #d7f7e1;    /* positive-subtle-background (green-200) */
+  --wb-notice: #c24e00;             /* orange-900：待认领、偏高的文字 */
+  --wb-notice-visual: #fc7d00;      /* notice-background (orange-600)：大面积图形；白底上不到 3:1，图标用 --wb-notice */
+  --wb-notice-subtle: #ffeccf;      /* notice-subtle-background (orange-200) */
+  --wb-negative: #d73220;           /* negative (red-900)：解绑、注销、失败 */
+  --wb-negative-subtle: #ffebe8;    /* negative-subtle-background (red-200) */
+  /* 浅色底上的文字要再深一档才过 4.5:1（上面的 900 档在 200 档底上只有 4.1–4.2:1） */
+  --wb-accent-on-subtle: #274dea;   /* blue-1000 */
+  --wb-positive-on-subtle: #036e45; /* green-1000 */
+  --wb-notice-on-subtle: #a73e00;   /* orange-1000 */
+  --wb-negative-on-subtle: #b72818; /* red-1000 */
+
+  /* 区间条：偏低 / 标准 / 偏高 / 最重一档，明度不同，旁边必有文字 */
+  --wb-range-low: #dadada;          /* gray-300 */
+  --wb-range-mid: #adeec5;          /* green-300 */
+  --wb-range-high: #ffa213;         /* orange-500：偏高，注意 */
+  --wb-range-severe: #ff513d;       /* red-700：危险、肥胖、重度、消瘦这类最重的档 */
+  --wb-marker: #131313;             /* 区间条上"你的位置" */
+
+  /* 成员头像（Spectrum 分类色 900 档，白字均 ≥4.5:1） */
+  --wb-member-1: #5424db;           /* indigo-1100 */
+  --wb-member-2: #ba1650;           /* magenta-1000 */
+  --wb-member-3: #056c5c;           /* seafoam-1000 */
+  --wb-member-4: #865500;           /* yellow-1000 */
+
+  /* 首页指标卡的图标分类色（只是区分指标，不表达状态） */
+  --wb-metric-fat: #fc7d00;         /* orange-600 */
+  --wb-metric-muscle: #05834e;      /* green-900 */
+
+  /* 宠物插图：猫按实物配色（负责人家的珍珠，claude-design/brand/珍珠-角色设定表.png），不跟主题变色，深色模式也不覆盖 */
+  --wb-pet-fur: #6d605b;            /* 暖调深灰毛色 */
+  --wb-pet-fur-shade: #574c48;      /* 背线、尾尖、右前脚的灰斑 */
+  --wb-pet-white: #fbf3ea;          /* 嘴巴斑、胸口和肚子、手套、后脚 */
+  --wb-pet-eye: #f0aa44;            /* 琥珀橙眼睛 */
+  --wb-pet-pink: #f79787;           /* 耳内、肉垫 */
+  --wb-pet-ink: #50342c;            /* 瞳孔、鼻头 */
+
+  /* 字体：Adobe Clean 不随 App 分发，用 Adobe 开源的 Source Sans 3 与思源黑体（Noto Sans SC）代替 */
+  --wb-font: "Source Sans 3", "Noto Sans SC", -apple-system, "PingFang SC", sans-serif;
+  /* 字号（Spectrum 2 移动端档 font-size-25…1300） */
+  --wb-fs-25: 12px;
+  --wb-fs-50: 13px;
+  --wb-fs-75: 15px;
+  --wb-fs-100: 17px;                /* 正文 */
+  --wb-fs-200: 19px;
+  --wb-fs-300: 22px;
+  --wb-fs-500: 27px;
+  --wb-fs-700: 34px;                /* 页面大标题 */
+  --wb-fs-900: 44px;
+  --wb-fs-1300: 70px;               /* 首页体重 */
+
+  /* 形状与尺寸 */
+  --wb-r-s: 4px;                    /* corner-radius-small */
+  --wb-r-m: 8px;                    /* corner-radius-medium：输入框 */
+  --wb-r-l: 10px;                   /* corner-radius-large：列表行内块 */
+  --wb-r-xl: 20px;                  /* 卡片、弹层：按 K6 样张取 20，比 Spectrum 的 corner-radius-extra-large（16）大一档 */
+  --wb-r-full: 9999px;              /* 按钮、徽标、开关 */
+  --wb-h-m: 40px;                   /* component-height-100（移动端） */
+  --wb-h-l: 50px;                   /* component-height-200：主按钮、输入框 */
+  --wb-shadow: 0 0 2px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.12);   /* drop-shadow-elevated */
+  --wb-shadow-strong: 0 0 2px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.16);
+  --wb-r-pill: 9999px;              /* 按钮、徽标、分段控件；圆形元素（头像、开关）始终用 --wb-r-full */
+
+  /* 主题个性：Spectrum 2 全部取"不加"的值；别的主题用它们加倾斜、撕边、胶带等（约定见设计规范 §4） */
+  --wb-font-head: var(--wb-font);   /* 标题 */
+  --wb-font-num: var(--wb-font);    /* 大数字 */
+  --wb-font-label: var(--wb-font);  /* 徽标、注释 */
+  --wb-head-weight: 800;
+  --wb-num-weight: 800;
+  --wb-card-shadow: none;           /* 卡片、分组列表的投影 */
+  --wb-drop: none;                  /* 撕边卡片外层的投影（filter） */
+  --wb-tilt-1: 0deg;                /* 主卡、指标卡交替的倾斜 */
+  --wb-tilt-2: 0deg;
+  --wb-tilt-btn: 0deg;              /* 主按钮 */
+  --wb-torn: none;                  /* 主卡的撕边（clip-path） */
+  --wb-deco-geo: block;             /* 主卡里的几何装饰 */
+  --wb-deco-tape: none;             /* 主卡上的胶带 */
+  --wb-tape: transparent;
+  --wb-highlight: transparent;      /* 分组标题下的荧光笔 */
+  --wb-hero-bg: var(--wb-accent-subtle);
+  --wb-delta-bg: var(--wb-accent);  /* "比上次"徽标 */
+  --wb-delta-ink: var(--wb-on-accent);
+  --wb-tab-bg: var(--wb-bg);
+  --wb-tab-ink: var(--wb-text-3);
+  --wb-tab-active: var(--wb-accent);
+  --wb-tab-active-bg: transparent;
+  --wb-tab-border: 2px solid var(--wb-divider);
+  --wb-link: var(--wb-accent);   /* 文字链接、文字按钮 */
+  --wb-chart-area: var(--wb-accent-subtle); /* 趋势图折线下的面积 */
+  /* 动效（Spectrum 2 的官方 token 里没有时长和曲线，这组是 WeighBetter 自定的；用法见 motion.css） */
+  --wb-dur-fast: 120ms;             /* 按下反馈 */
+  --wb-dur: 240ms;                  /* 弹层淡入、徽标弹出 */
+  --wb-dur-slow: 420ms;             /* 页面与卡片进入、底部弹层滑入 */
+  --wb-ease: cubic-bezier(0.2, 0, 0, 1);          /* 减速：进入 */
+  --wb-ease-io: cubic-bezier(0.45, 0, 0.4, 1);    /* 走势线描绘、圆环填充 */
+  --wb-ease-pop: cubic-bezier(0.2, 0, 0, 1);      /* 卡片进入：不回弹 */
+  --wb-enter-y: 12px;               /* 进入时从下方 12px 升起 */
+  --wb-enter-rot: 0deg;
+  --wb-stagger: 40ms;               /* 同屏多张卡片依次进入的间隔 */
+}
+
+/*
+ * 深色模式（Spectrum 2 dark，括号里是 token 名，值取 dark 那一列）。只覆盖颜色与投影，尺寸、字体、动效不变。
+ * 层级越高越亮：底色 gray-25 → 弹层 gray-50 → 卡片 gray-75 → 卡内块 gray-100，弹层里的卡片仍比弹层亮一档。
+ * 对比度按 §1 的方法逐对查过：正文三档在卡片上 ≥4.6:1；*-on-subtle 在卡片、底色和各自浅底上都 ≥6.7:1；
+ * 白字在强调蓝、危险红上 ≥4.5:1。成员头像色不随模式变（白字在上面），区间条从"偏低"到"最重一档"越来越亮。
+ */
+[data-mode="dark"] {
+  /* 表面 */
+  --wb-bg: #111111;                 /* background-base (gray-25) */
+  --wb-layer-1: #222222;            /* gray-75：卡片、分组列表 */
+  --wb-layer-2: #2c2c2c;            /* gray-100：卡片里的内嵌块、按下态 */
+  --wb-elevated: #1b1b1b;           /* gray-50：底部弹层、对话框（比底色亮一档，里面的卡片再亮一档） */
+  --wb-fill: #393939;               /* gray-300：禁用开关的轨道 */
+  --wb-scrim: rgba(0, 0, 0, 0.6);   /* overlay：深色下加深，弹层才分得开 */
+  --wb-divider: #323232;            /* gray-200 */
+  --wb-border: #393939;             /* gray-300 */
+  --wb-border-strong: #6d6d6d;      /* gray-500：输入框、次要按钮描边 */
+
+  /* 文字 */
+  --wb-title: #f2f2f2;              /* title-color (gray-900) */
+  --wb-text: #dbdbdb;               /* neutral-content (gray-800) */
+  --wb-text-2: #afafaf;             /* neutral-subdued-content (gray-700) */
+  --wb-text-3: #8a8a8a;             /* gray-600：卡片上 4.6:1 */
+  --wb-disabled: #444444;           /* disabled-content (gray-400) */
+
+  /* 强调色 */
+  --wb-accent: #4069fd;             /* accent-background (blue-800)：白字 4.5:1 */
+  --wb-accent-strong: #6995fe;      /* blue-1000 */
+  --wb-accent-visual: #5681ff;      /* accent-visual (blue-900) */
+  --wb-accent-subtle: #0f1c52;      /* blue-200：主卡底、选中态 */
+  --wb-accent-faint: #0e173f;       /* blue-100 */
+  --wb-accent-shape: #0c2175;       /* blue-300：主卡里的装饰几何形 */
+  --wb-on-accent: #ffffff;
+  --wb-focus: #5681ff;              /* blue-900 */
+
+  /* 语义色 */
+  --wb-positive: #099d59;           /* positive-visual (green-900) */
+  --wb-positive-subtle: #00261d;    /* green-200 */
+  --wb-notice: #e06400;             /* notice-background (orange-900) */
+  --wb-notice-visual: #e06400;      /* 同上：深色底上本身就够亮 */
+  --wb-notice-subtle: #3d1500;      /* orange-200 */
+  --wb-negative: #df3422;           /* red-800：白字 4.5:1（red-900 只有 3.5:1） */
+  --wb-negative-subtle: #440d05;    /* red-200 */
+  /* 深色底上的文字要再亮一档 */
+  --wb-accent-on-subtle: #7ca9fc;   /* blue-1100 */
+  --wb-positive-on-subtle: #18c16e; /* green-1100 */
+  --wb-notice-on-subtle: #ff8900;   /* orange-1100 */
+  --wb-negative-on-subtle: #ff8678; /* red-1100 */
+
+  /* 区间条：偏低最暗，越重越亮 */
+  --wb-range-low: #444444;          /* gray-400 */
+  --wb-range-mid: #047c4b;          /* green-700 */
+  --wb-range-high: #b94900;         /* orange-700 */
+  --wb-range-severe: #df3422;       /* red-800 */
+  --wb-marker: #f2f2f2;             /* 区间条上"你的位置" */
+
+  /* 首页指标卡的图标分类色 */
+  --wb-metric-fat: #e06400;         /* orange-900 */
+  --wb-metric-muscle: #099d59;      /* green-900 */
+
+  /* 投影：深色下靠层级亮度区分，投影只是加深边缘 */
+  --wb-shadow: 0 0 2px rgba(0, 0, 0, 0.36), 0 2px 8px rgba(0, 0, 0, 0.48);   /* drop-shadow (dark 0.36) */
+  --wb-shadow-strong: 0 0 2px rgba(0, 0, 0, 0.36), 0 4px 16px rgba(0, 0, 0, 0.56);
+
+  /* 引用别的变量的那几个要在这里再写一遍：var() 在声明处求值，从 :root 继承下来的仍是浅色值 */
+  --wb-hero-bg: var(--wb-accent-subtle);
+  --wb-delta-bg: var(--wb-accent);
+  --wb-delta-ink: var(--wb-on-accent);
+  --wb-tab-bg: var(--wb-bg);
+  --wb-tab-ink: var(--wb-text-3);
+  --wb-tab-active: var(--wb-accent-strong);  /* Tab 字 12px，blue-800 在底色上只有 4.2:1 */
+  --wb-tab-border: 2px solid var(--wb-divider);
+  --wb-link: var(--wb-accent-strong);  /* 深色底上 blue-800 的链接字只有 3.9:1，用亮一档 */
+  --wb-chart-area: var(--wb-accent-subtle);
+}
